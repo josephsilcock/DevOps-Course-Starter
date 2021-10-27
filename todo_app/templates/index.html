@@ -9,9 +9,20 @@
 
   <div class="row">
     <div class="col-md-12">
-      <h2>Items</h2>
+      <h2>Incomplete Items</h2>
       <ul class="list-group mb-4">
-        {% for item in items %}
+        {% for item in incomplete_items %}
+            <li>
+                {{ item.title }}
+                <form action="/delete-item" method="post">
+                    <button name="id" value={{ item.id }}>Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+      </ul>
+      <h2>Complete Items</h2>
+      <ul class="list-group mb-4">
+        {% for item in complete_items %}
             <li>
                 {{ item.title }}
                 <form action="/delete-item" method="post">
