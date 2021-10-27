@@ -3,8 +3,7 @@ from typing import Dict, List
 from flask import session
 
 _DEFAULT_ITEMS = [
-    {"id": 1, "status": "Not Started", "title": "List saved todo items"},
-    {"id": 2, "status": "Not Started", "title": "Allow new items to be added"},
+    {"id": 1, "status": "Not Started", "title": "Get something to do!"},
 ]
 
 
@@ -15,7 +14,7 @@ def get_items() -> List[Dict]:
     Returns:
         list: The list of saved items.
     """
-    return session.get("items", [])
+    return session.get("items", _DEFAULT_ITEMS.copy())
 
 
 def get_item(id_: str) -> Dict:
