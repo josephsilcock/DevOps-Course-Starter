@@ -1,11 +1,5 @@
 from flask import session
 
-_DEFAULT_ITEMS = [
-    { 'id': 1, 'status': 'Not Started', 'title': 'List saved todo items' },
-    { 'id': 2, 'status': 'Not Started', 'title': 'Allow new items to be added' }
-]
-
-
 def get_items():
     """
     Fetches all saved items from the session.
@@ -13,7 +7,7 @@ def get_items():
     Returns:
         list: The list of saved items.
     """
-    return session.get('items', _DEFAULT_ITEMS.copy())
+    return session.get('items', [])
 
 
 def get_item(id):
@@ -52,6 +46,10 @@ def add_item(title):
     session['items'] = items
 
     return item
+
+
+def remove_item(id_: int) -> None:
+    session['items'] = [item for item in get_items() if item["id"] != id_]
 
 
 def save_item(item):

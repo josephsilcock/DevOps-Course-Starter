@@ -12,7 +12,12 @@
       <h2>Items</h2>
       <ul class="list-group mb-4">
         {% for item in items %}
-            <li>{{item.title}}</li>
+            <li>
+                {{ item.title }}
+                <form action="/delete-item" method="post">
+                    <button name="id" value={{ item.id }}>Delete</button>
+                </form>
+            </li>
         {% endfor %}
       </ul>
     </div>
