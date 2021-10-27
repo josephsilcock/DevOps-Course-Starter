@@ -1,36 +1,38 @@
+from typing import Dict, List
+
 from flask import session
 
 _DEFAULT_ITEMS = [
-    { 'id': 1, 'status': 'Not Started', 'title': 'List saved todo items' },
-    { 'id': 2, 'status': 'Not Started', 'title': 'Allow new items to be added' }
+    {"id": 1, "status": "Not Started", "title": "List saved todo items"},
+    {"id": 2, "status": "Not Started", "title": "Allow new items to be added"},
 ]
 
 
-def get_items():
+def get_items() -> List[Dict]:
     """
     Fetches all saved items from the session.
 
     Returns:
         list: The list of saved items.
     """
-    return session.get('items', [])
+    return session.get("items", [])
 
 
-def get_item(id):
+def get_item(id_: str) -> Dict:
     """
     Fetches the saved item with the specified ID.
 
     Args:
-        id: The ID of the item.
+        id_: The ID of the item.
 
     Returns:
         item: The saved item, or None if no items match the specified ID.
     """
     items = get_items()
-    return next((item for item in items if item['id'] == int(id)), None)
+    return next((item for item in items if item["id"] == int(id_)), None)
 
 
-def add_item(title):
+def add_item(title: str) -> Dict:
     """
     Adds a new item with the specified title to the session.
 
@@ -43,22 +45,22 @@ def add_item(title):
     items = get_items()
 
     # Determine the ID for the item based on that of the previously added item
-    id = items[-1]['id'] + 1 if items else 0
+    id_ = items[-1]["id"] + 1 if items else 0
 
-    item = { 'id': id, 'title': title, 'status': 'Not Started' }
+    item = {"id": id_, "title": title, "status": "Not Started"}
 
     # Add the item to the list
     items.append(item)
-    session['items'] = items
+    session["items"] = items
 
     return item
 
 
 def remove_item(id_: str) -> None:
-    session['items'] = [item for item in get_items() if item["id"] != int(id_)]
+    session["items"] = [item for item in get_items() if item["id"] != int(id_)]
 
 
-def save_item(item):
+def save_item(item: Dict) -> Dict:
     """
     Updates an existing item in the session. If no existing item matches the ID of the specified item, nothing is saved.
 
@@ -66,8 +68,8 @@ def save_item(item):
         item: The item to save.
     """
     existing_items = get_items()
-    updated_items = [item if item['id'] == existing_item['id'] else existing_item for existing_item in existing_items]
+    updated_items = [item if item["id"] == existing_item["id"] else existing_item for existing_item in existing_items]
 
-    session['items'] = updated_items
+    session["items"] = updated_items
 
     return item

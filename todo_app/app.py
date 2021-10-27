@@ -1,13 +1,19 @@
 from flask import Flask, render_template, request, redirect
 
-from todo_app.data.session_items import get_items, add_item, remove_item, get_item, save_item
+from todo_app.data.session_items import (
+    get_items,
+    add_item,
+    remove_item,
+    get_item,
+    save_item,
+)
 from todo_app.flask_config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config())
 
 
-@app.route('/')
+@app.route("/")
 def index():
     completed_items = []
     incomplete_items = []
@@ -27,13 +33,13 @@ def index():
 @app.route("/add-item", methods=["POST"])
 def add_item_to_items():
     add_item(request.values.get("title"))
-    return redirect('/')
+    return redirect("/")
 
 
 @app.route("/delete-item", methods=["POST"])
 def delete_item():
     remove_item(request.values.get("id"))
-    return redirect('/')
+    return redirect("/")
 
 
 @app.route("/complete-item", methods=["POST"])
@@ -41,4 +47,4 @@ def complete_item():
     item = get_item(request.values.get("id"))
     item["status"] = "Completed"
     save_item(item)
-    return redirect('/')
+    return redirect("/")
