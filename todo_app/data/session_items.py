@@ -54,8 +54,8 @@ def add_item(title):
     return item
 
 
-def remove_item(id_: int) -> None:
-    session['items'] = [item for item in get_items() if item["id"] != id_]
+def remove_item(id_: str) -> None:
+    session['items'] = [item for item in get_items() if item["id"] != int(id_)]
 
 
 def save_item(item):
