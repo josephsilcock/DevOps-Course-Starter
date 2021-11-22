@@ -1,24 +1,20 @@
 from flask import Flask, render_template, request, redirect
 
-from todo_app.data.session_items import (
-    get_items,
-    add_item,
-    remove_item,
-    get_item,
-    save_item,
-    Status,
-)
+from todo_app.data.trello_items import TrelloRequests, Status
 from todo_app.flask_config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config())
 
 
+trello_requests = TrelloRequests()
+
+
 @app.route("/")
 def index():
     completed_items = []
     incomplete_items = []
-    for item in sorted(get_items(), key=lambda item: item["id"]):
+    for item in sorted(trello_requests.get_items(), key=lambda item: item["id"]):
         if item["status"] == Status.COMPLETED:
             completed_items.append(item)
         else:
@@ -33,19 +29,17 @@ def index():
 
 @app.route("/add-item", methods=["POST"])
 def add_item_to_items():
-    add_item(request.values.get("title"))
+    trello_requests.add_item(request.values.get("title"))
     return redirect("/")
 
 
 @app.route("/delete-item", methods=["POST"])
 def delete_item():
-    remove_item(request.values.get("id"))
+    trello_requests.remove_item(request.values.get("id"))
     return redirect("/")
 
 
 @app.route("/complete-item", methods=["POST"])
 def complete_item():
-    item = get_item(request.values.get("id"))
-    item["status"] = "Completed"
-    save_item(item)
+    trello_requests.update_item_status(request.values.get("id"), Status.COMPLETED)
     return redirect("/")
