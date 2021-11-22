@@ -14,7 +14,10 @@
         <ul class="list-group mb-4">
           {% for item in not_started_items %}
           <li>
-            {{ item.title }}
+            <div>{{ item.title }}</div>
+            {%  if item.description|length > 0 %}
+              <div>{{ item.description }}</div>
+            {% endif %}
             <div class="btn-group mr-2" role="group">
               <form action="/start-item" method="post" class="form-inline">
                   <button name="id" value="{{ item.id_ }}" class="btn btn-primary btn-sm" >Start</button>
@@ -34,7 +37,10 @@
         <ul class="list-group mb-4">
           {% for item in in_progress_items %}
           <li>
-            {{ item.title }}
+            <div>{{ item.title }}</div>
+            {%  if item.description|length > 0 %}
+              <div>{{ item.description }}</div>
+            {% endif %}
             <div class="btn-group mr-2" role="group">
               <form action="/complete-item" method="post" class="form-inline">
                   <button name="id" value="{{ item.id_ }}" class="btn btn-success btn-sm" >Complete</button>
@@ -73,6 +79,7 @@
       <div class="form-group mx-sm-3 mb-2">
         <label for="title" class="sr-only">Title:</label>
         <input type="text" class="form-control" id="title" name="title" placeholder="Title" required>
+        <input type="text" class="form-control" id="description" name="description" placeholder="Description">
       </div>
       <input type="submit" class="btn btn-primary mb-2" value="Add item">
     </form>

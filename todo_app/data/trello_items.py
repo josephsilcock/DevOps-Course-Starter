@@ -21,7 +21,12 @@ class TrelloRequests:
         }
 
     def _json_to_item(self, json: Dict[str, str]) -> Item:
-        return Item(id_=json["id"], status=self._lists_ids_to_names[json["idList"]], title=json["name"])
+        return Item(
+            id_=json["id"],
+            status=self._lists_ids_to_names[json["idList"]],
+            title=json["name"],
+            description=json["desc"],
+        )
 
     def get_items(self) -> List[Item]:
         return [
@@ -34,9 +39,9 @@ class TrelloRequests:
             requests.get(f"{self._url}/boards/{self._board_id}/cards/{id_}", params=self._params).json()
         )
 
-    def add_item(self, title: str) -> Item:
+    def add_item(self, title: str, description: str) -> Item:
         post_params = self._params.copy()
-        post_params.update({"name": title, "idList": self._names_to_list_ids[Status.NOT_STARTED]})
+        post_params.update({"name": title, "idList": self._names_to_list_ids[Status.NOT_STARTED], "desc": description})
         return self._json_to_item(requests.post(f"{self._url}/cards", params=post_params).json())
 
     def remove_item(self, id_: str) -> None:

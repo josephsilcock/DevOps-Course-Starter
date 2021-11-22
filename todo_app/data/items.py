@@ -12,4 +12,5 @@ class Status(str, Enum):
 class Item:
     id_: str
     title: str
+    description: str
     status: Status
