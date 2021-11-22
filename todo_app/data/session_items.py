@@ -1,9 +1,16 @@
+from enum import Enum
 from typing import Dict, List
 
 from flask import session
 
+
+class Status(str, Enum):
+    NOT_STARTED = "Not Started"
+    COMPLETED = "Completed"
+
+
 _DEFAULT_ITEMS = [
-    {"id": 1, "status": "Not Started", "title": "Get something to do!"},
+    {"id": 1, "status": Status.NOT_STARTED, "title": "Get something to do!"},
 ]
 
 
@@ -46,7 +53,7 @@ def add_item(title: str) -> Dict:
     # Determine the ID for the item based on that of the previously added item
     id_ = items[-1]["id"] + 1 if items else 0
 
-    item = {"id": id_, "title": title, "status": "Not Started"}
+    item = {"id": id_, "title": title, "status": Status.NOT_STARTED}
 
     # Add the item to the list
     items.append(item)

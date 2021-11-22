@@ -6,6 +6,7 @@ from todo_app.data.session_items import (
     remove_item,
     get_item,
     save_item,
+    Status,
 )
 from todo_app.flask_config import Config
 
@@ -18,7 +19,7 @@ def index():
     completed_items = []
     incomplete_items = []
     for item in sorted(get_items(), key=lambda item: item["id"]):
-        if item["status"] == "Completed":
+        if item["status"] == Status.COMPLETED:
             completed_items.append(item)
         else:
             incomplete_items.append(item)
