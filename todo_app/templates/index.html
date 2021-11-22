@@ -18,6 +18,9 @@
             {%  if item.description|length > 0 %}
               <div>{{ item.description }}</div>
             {% endif %}
+            {%  if item.due is not none %}
+              <div>{{ item.due.day }} {{ item.due.strftime("%b %Y") }}</div>
+            {% endif %}
             <div class="btn-group mr-2" role="group">
               <form action="/start-item" method="post" class="form-inline">
                   <button name="id" value="{{ item.id_ }}" class="btn btn-primary btn-sm" >Start</button>
@@ -40,6 +43,9 @@
             <div>{{ item.title }}</div>
             {%  if item.description|length > 0 %}
               <div>{{ item.description }}</div>
+            {% endif %}
+            {%  if item.due is not none %}
+              <div>{{ item.due.day }} {{ item.due.strftime("%b %Y") }}</div>
             {% endif %}
             <div class="btn-group mr-2" role="group">
               <form action="/complete-item" method="post" class="form-inline">
@@ -80,6 +86,7 @@
         <label for="title" class="sr-only">Title:</label>
         <input type="text" class="form-control" id="title" name="title" placeholder="Title" required>
         <input type="text" class="form-control" id="description" name="description" placeholder="Description">
+        <input type="date" class="form-control" id="due-date" name="due-date">
       </div>
       <input type="submit" class="btn btn-primary mb-2" value="Add item">
     </form>

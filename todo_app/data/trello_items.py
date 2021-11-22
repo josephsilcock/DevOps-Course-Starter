@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from typing import Dict, List
 
 import requests
@@ -26,6 +27,7 @@ class TrelloRequests:
             status=self._lists_ids_to_names[json["idList"]],
             title=json["name"],
             description=json["desc"],
+            due=datetime.strptime(json["due"][:10], "%Y-%m-%d") if json["due"] else None,
         )
 
     def get_items(self) -> List[Item]:
@@ -39,9 +41,16 @@ class TrelloRequests:
             requests.get(f"{self._url}/boards/{self._board_id}/cards/{id_}", params=self._params).json()
         )
 
-    def add_item(self, title: str, description: str) -> Item:
+    def add_item(self, title: str, description: str, due: str) -> Item:
         post_params = self._params.copy()
-        post_params.update({"name": title, "idList": self._names_to_list_ids[Status.NOT_STARTED], "desc": description})
+        post_params.update(
+            {
+                "name": title,
+                "idList": self._names_to_list_ids[Status.NOT_STARTED],
+                "desc": description,
+                "due": due,
+            }
+        )
         return self._json_to_item(requests.post(f"{self._url}/cards", params=post_params).json())
 
     def remove_item(self, id_: str) -> None:

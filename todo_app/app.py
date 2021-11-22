@@ -12,7 +12,7 @@ trello_requests = TrelloRequests()
 
 @app.route("/")
 def index():
-    all_items = trello_requests.get_items()
+    all_items = sorted(trello_requests.get_items(), key=lambda item: (item.due is None, item.due))
     completed = [item for item in all_items if item.status == Status.COMPLETED]
     in_progress = [item for item in all_items if item.status == Status.IN_PROGRESS]
     not_started = [item for item in all_items if item.status == Status.NOT_STARTED]
@@ -27,7 +27,9 @@ def index():
 
 @app.route("/add-item", methods=["POST"])
 def add_item_to_items():
-    trello_requests.add_item(request.values.get("title"), request.values.get("description", ""))
+    trello_requests.add_item(
+        request.values.get("title"), request.values.get("description"), request.values.get("due-date")
+    )
     return redirect("/")
 
 

@@ -1,5 +1,7 @@
 from dataclasses import dataclass
+from datetime import date
 from enum import Enum
+from typing import Optional
 
 
 class Status(str, Enum):
@@ -14,3 +16,4 @@ class Item:
     title: str
     description: str
     status: Status
+    due: Optional[date]
