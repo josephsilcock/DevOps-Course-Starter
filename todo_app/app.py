@@ -14,8 +14,8 @@ trello_requests = TrelloRequests()
 def index():
     completed_items = []
     incomplete_items = []
-    for item in sorted(trello_requests.get_items(), key=lambda item: item["id"]):
-        if item["status"] == Status.COMPLETED:
+    for item in sorted(trello_requests.get_items(), key=lambda item: item.id_):
+        if item.status == Status.COMPLETED:
             completed_items.append(item)
         else:
             incomplete_items.append(item)
