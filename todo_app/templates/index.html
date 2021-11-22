@@ -9,10 +9,52 @@
 
   <div class="row">
     <div class="col-md-12">
-      <h2>Items</h2>
-      <ul class="list-group mb-4">
-        <!-- List the todo items here -->
-      </ul>
+      {% if incomplete_items is defined and incomplete_items|length > 0 %}
+        <h2>Incomplete Items</h2>
+        <ul class="list-group mb-4">
+          {% for item in incomplete_items %}
+          <li>
+            {{ item.title }}
+            <div class="btn-group mr-2" role="group">
+              <form action="/complete-item" method="post" class="form-inline">
+                  <button name="id" value="{{ item.id }}" class="btn btn-success btn-sm" >Complete</button>
+              </form>
+            </div>
+            <div class="btn-group mr-2" role="group">
+              <form action="/delete-item" method="post" class="form-inline">
+                  <button name="id" value="{{ item.id }}" class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if completed_items is defined and completed_items|length > 0 %}
+        <h2>Complete Items</h2>
+        <ul class="list-group mb-4">
+          {% for item in completed_items %}
+              <li>
+                  {{ item.title }}
+                  <div class="btn-group mr-2" role="group">
+                    <form action="/delete-item" method="post" class="form-inline">
+                      <button name="id" value="{{ item.id }}" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                  </div>
+              </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
     </div>
+  </div>
+
+  <h2>Add item to do</h2><br>
+  <div class="row">
+    <form class="form-inline" action="/add-item" method="post">
+      <div class="form-group mx-sm-3 mb-2">
+        <label for="title" class="sr-only">Title:</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="Title" required>
+      </div>
+      <input type="submit" class="btn btn-primary mb-2" value="Add item">
+    </form>
   </div>
 {% endblock %}
