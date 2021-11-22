@@ -9,10 +9,30 @@
 
   <div class="row">
     <div class="col-md-12">
-      {% if incomplete_items is defined and incomplete_items|length > 0 %}
-        <h2>Incomplete Items</h2>
+      {% if not_started_items is defined and not_started_items|length > 0 %}
+        <h2>To Do</h2>
         <ul class="list-group mb-4">
-          {% for item in incomplete_items %}
+          {% for item in not_started_items %}
+          <li>
+            {{ item.title }}
+            <div class="btn-group mr-2" role="group">
+              <form action="/start-item" method="post" class="form-inline">
+                  <button name="id" value="{{ item.id_ }}" class="btn btn-primary btn-sm" >Start</button>
+              </form>
+            </div>
+            <div class="btn-group mr-2" role="group">
+              <form action="/delete-item" method="post" class="form-inline">
+                  <button name="id" value="{{ item.id_ }}" class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if in_progress_items is defined and in_progress_items|length > 0 %}
+        <h2>In Progress</h2>
+        <ul class="list-group mb-4">
+          {% for item in in_progress_items %}
           <li>
             {{ item.title }}
             <div class="btn-group mr-2" role="group">

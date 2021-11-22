@@ -12,18 +12,16 @@ trello_requests = TrelloRequests()
 
 @app.route("/")
 def index():
-    completed_items = []
-    incomplete_items = []
-    for item in sorted(trello_requests.get_items(), key=lambda item: item.id_):
-        if item.status == Status.COMPLETED:
-            completed_items.append(item)
-        else:
-            incomplete_items.append(item)
+    all_items = trello_requests.get_items()
+    completed = [item for item in all_items if item.status == Status.COMPLETED]
+    in_progress = [item for item in all_items if item.status == Status.IN_PROGRESS]
+    not_started = [item for item in all_items if item.status == Status.NOT_STARTED]
 
     return render_template(
         "index.html",
-        completed_items=completed_items,
-        incomplete_items=incomplete_items,
+        completed_items=completed,
+        in_progress_items=in_progress,
+        not_started_items=not_started,
     )
 
 
@@ -42,4 +40,10 @@ def delete_item():
 @app.route("/complete-item", methods=["POST"])
 def complete_item():
     trello_requests.update_item_status(request.values.get("id"), Status.COMPLETED)
+    return redirect("/")
+
+
+@app.route("/start-item", methods=["POST"])
+def start_item():
+    trello_requests.update_item_status(request.values.get("id"), Status.IN_PROGRESS)
     return redirect("/")
