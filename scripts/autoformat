@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+echo "===]> Info: Running autoflake..."
+poetry run autoflake --remove-all-unused-imports --in-place --recursive --ignore-init-module-imports todo_app
+echo "===]> Info: Running black..."
+poetry run black todo_app
+echo "===]> Info: Running isort..."
+poetry run isort todo_app

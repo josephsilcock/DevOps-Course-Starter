@@ -9,17 +9,15 @@ from todo_app.data.items import Item, Status
 class TrelloRequests:
     def __init__(self):
         self._board_id: str = os.getenv("TRELLO_BOARD_ID")
-        self._params: Dict[str, str] = {
-            "key": os.getenv("TRELLO_KEY"),
-            "token": os.getenv("TRELLO_TOKEN")
-        }
+        self._params: Dict[str, str] = {"key": os.getenv("TRELLO_KEY"), "token": os.getenv("TRELLO_TOKEN")}
         self._url = f"https://api.trello.com/1"
         self._lists_ids_to_names = self._get_lists()
         self._names_to_list_ids = {v: k for k, v in self._lists_ids_to_names.items()}
 
     def _get_lists(self) -> Dict[str, Status]:
         return {
-            l["id"]: Status(l["name"]) for l in requests.get(f"{self._url}/boards/{self._board_id}/lists", params=self._params).json()
+            l["id"]: Status(l["name"])
+            for l in requests.get(f"{self._url}/boards/{self._board_id}/lists", params=self._params).json()
         }
 
     def _json_to_item(self, json: Dict[str, str]) -> Item:
@@ -27,11 +25,14 @@ class TrelloRequests:
 
     def get_items(self) -> List[Item]:
         return [
-            self._json_to_item(item) for item in requests.get(f"{self._url}/boards/{self._board_id}/cards", params=self._params).json()
+            self._json_to_item(item)
+            for item in requests.get(f"{self._url}/boards/{self._board_id}/cards", params=self._params).json()
         ]
 
     def get_item(self, id_: str) -> Item:
-        return self._json_to_item(requests.get(f"{self._url}/boards/{self._board_id}/cards/{id_}", params=self._params).json())
+        return self._json_to_item(
+            requests.get(f"{self._url}/boards/{self._board_id}/cards/{id_}", params=self._params).json()
+        )
 
     def add_item(self, title: str) -> Item:
         post_params = self._params.copy()
