@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import requests
 
@@ -9,17 +9,23 @@ from todo_app.data.items import Item, Status
 
 class TrelloRequests:
     def __init__(self):
+        self.errored = False
         self._board_id: str = os.getenv("TRELLO_BOARD_ID")
         self._params: Dict[str, str] = {"key": os.getenv("TRELLO_KEY"), "token": os.getenv("TRELLO_TOKEN")}
         self._url = f"https://api.trello.com/1"
-        self._lists_ids_to_names = self._get_lists()
-        self._names_to_list_ids = {v: k for k, v in self._lists_ids_to_names.items()}
+        self._lists_ids_to_names = None
+        self._names_to_list_ids = None
+
+    def init_list_maps(self) -> None:
+        if self._lists_ids_to_names is None:
+            self._lists_ids_to_names = self._get_lists()
+            if self.errored:
+                return
+            self._names_to_list_ids = {v: k for k, v in self._lists_ids_to_names.items()}
 
     def _get_lists(self) -> Dict[str, Status]:
-        return {
-            l["id"]: Status(l["name"])
-            for l in requests.get(f"{self._url}/boards/{self._board_id}/lists", params=self._params).json()
-        }
+        r = self._get(f"{self._url}/boards/{self._board_id}/lists", self._params)
+        return {l["id"]: Status(l["name"]) for l in r.json()} if r is not None else None
 
     def _json_to_item(self, json: Dict[str, str]) -> Item:
         return Item(
@@ -30,18 +36,20 @@ class TrelloRequests:
             due=datetime.strptime(json["due"][:10], "%Y-%m-%d") if json["due"] else None,
         )
 
-    def get_items(self) -> List[Item]:
-        return [
-            self._json_to_item(item)
-            for item in requests.get(f"{self._url}/boards/{self._board_id}/cards", params=self._params).json()
-        ]
+    def _get(self, url: str, params: Dict[str, str]) -> requests.Response:
+        r = requests.get(url, params=params)
+        self._set_errored(r)
+        return r if not self.errored else None
 
-    def get_item(self, id_: str) -> Item:
-        return self._json_to_item(
-            requests.get(f"{self._url}/boards/{self._board_id}/cards/{id_}", params=self._params).json()
-        )
+    def _set_errored(self, r: requests.Response) -> None:
+        if r.status_code != 200:
+            self.errored = True
 
-    def add_item(self, title: str, description: str, due: str) -> Item:
+    def get_items(self) -> Optional[List[Item]]:
+        r = self._get(f"{self._url}/boards/{self._board_id}/cards", self._params)
+        return [self._json_to_item(item) for item in r.json()] if r is not None else None
+
+    def add_item(self, title: str, description: str, due: str) -> None:
         post_params = self._params.copy()
         post_params.update(
             {
@@ -51,12 +59,15 @@ class TrelloRequests:
                 "due": due,
             }
         )
-        return self._json_to_item(requests.post(f"{self._url}/cards", params=post_params).json())
+        r = requests.post(f"{self._url}/cards", params=post_params)
+        self._set_errored(r)
 
     def remove_item(self, id_: str) -> None:
-        requests.delete(f"{self._url}/cards/{id_}", params=self._params)
+        r = requests.delete(f"{self._url}/cards/{id_}", params=self._params)
+        self._set_errored(r)
 
-    def update_item_status(self, id_: str, new_status: Status) -> Item:
+    def update_item_status(self, id_: str, new_status: Status) -> None:
         put_params = self._params.copy()
         put_params["idList"] = self._names_to_list_ids[new_status]
-        return self._json_to_item(requests.put(f"{self._url}/cards/{id_}", params=put_params).json())
+        r = requests.put(f"{self._url}/cards/{id_}", params=put_params)
+        self._set_errored(r)
