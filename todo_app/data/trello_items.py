@@ -42,7 +42,7 @@ class TrelloRequests:
         return r if not self.errored else None
 
     def _set_errored(self, r: requests.Response) -> None:
-        if r.status_code != 200:
+        if !r.ok:
             self.errored = True
 
     def get_items(self) -> Optional[List[Item]]:
