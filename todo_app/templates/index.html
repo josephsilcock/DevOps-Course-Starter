@@ -9,10 +9,10 @@
 
   <div class="row">
     <div class="col-md-12">
-      {% if not_started_items is defined and not_started_items|length > 0 %}
+      {% if items.not_started|length > 0 %}
         <h2>To Do</h2>
         <ul class="list-group mb-4">
-          {% for item in not_started_items %}
+          {% for item in items.not_started %}
           <li>
             <div>{{ item.title }}</div>
             {%  if item.description|length > 0 %}
@@ -35,10 +35,10 @@
           {% endfor %}
         </ul>
       {% endif %}
-      {% if in_progress_items is defined and in_progress_items|length > 0 %}
+      {% if items.in_progress|length > 0 %}
         <h2>In Progress</h2>
         <ul class="list-group mb-4">
-          {% for item in in_progress_items %}
+          {% for item in items.in_progress %}
           <li>
             <div>{{ item.title }}</div>
             {%  if item.description|length > 0 %}
@@ -61,10 +61,10 @@
           {% endfor %}
         </ul>
       {% endif %}
-      {% if completed_items is defined and completed_items|length > 0 %}
+      {% if items.completed|length > 0 %}
         <h2>Complete Items</h2>
         <ul class="list-group mb-4">
-          {% for item in completed_items %}
+          {% for item in items.completed %}
               <li>
                   {{ item.title }}
                   <div class="btn-group mr-2" role="group">

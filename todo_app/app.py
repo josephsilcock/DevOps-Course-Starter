@@ -18,22 +18,15 @@ def index():
         trello_requests.errored = False
         return redirect("/error")
 
-    all_items = trello_requests.get_items()
+    items = trello_requests.get_items()
 
     if trello_requests.errored:
         trello_requests.errored = False
         return redirect("/error")
 
-    sorted_items = sorted(all_items, key=lambda item: (item.due is None, item.due))
-    completed = [item for item in sorted_items if item.status == Status.COMPLETED]
-    in_progress = [item for item in sorted_items if item.status == Status.IN_PROGRESS]
-    not_started = [item for item in sorted_items if item.status == Status.NOT_STARTED]
-
     return render_template(
         "index.html",
-        completed_items=completed,
-        in_progress_items=in_progress,
-        not_started_items=not_started,
+        items=items,
     )
 
 

@@ -1,10 +1,10 @@
 import os
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict
 
 import requests
 
-from todo_app.data.items import Item, Status
+from todo_app.data.items import Item, Status, ItemView
 
 
 class TrelloRequests:
@@ -45,9 +45,9 @@ class TrelloRequests:
         if not r.ok:
             self.errored = True
 
-    def get_items(self) -> Optional[List[Item]]:
+    def get_items(self) -> ItemView:
         r = self._get(f"{self._url}/boards/{self._board_id}/cards", self._params)
-        return [self._json_to_item(item) for item in r.json()] if r is not None else None
+        return ItemView([self._json_to_item(item) for item in r.json()])
 
     def add_item(self, title: str, description: str, due: str) -> None:
         post_params = self._params.copy()
