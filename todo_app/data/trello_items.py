@@ -4,7 +4,7 @@ from typing import Dict
 
 import requests
 
-from todo_app.data.items import Item, Status, ItemView
+from todo_app.data.items import Item, ItemView, Status
 
 
 class TrelloRequests:
