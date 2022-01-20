@@ -9,20 +9,52 @@
 
   <div class="row">
     <div class="col-md-12">
-      {% if incomplete_items is defined and incomplete_items|length > 0 %}
-        <h2>Incomplete Items</h2>
+      {% if not_started_items is defined and not_started_items|length > 0 %}
+        <h2>To Do</h2>
         <ul class="list-group mb-4">
-          {% for item in incomplete_items %}
+          {% for item in not_started_items %}
           <li>
-            {{ item.title }}
+            <div>{{ item.title }}</div>
+            {%  if item.description|length > 0 %}
+              <div>{{ item.description }}</div>
+            {% endif %}
+            {%  if item.due is not none %}
+              <div>{{ item.due.day }} {{ item.due.strftime("%b %Y") }}</div>
+            {% endif %}
             <div class="btn-group mr-2" role="group">
-              <form action="/complete-item" method="post" class="form-inline">
-                  <button name="id" value="{{ item.id }}" class="btn btn-success btn-sm" >Complete</button>
+              <form action="/start-item" method="post" class="form-inline">
+                  <button name="id" value="{{ item.id_ }}" class="btn btn-primary btn-sm" >Start</button>
               </form>
             </div>
             <div class="btn-group mr-2" role="group">
               <form action="/delete-item" method="post" class="form-inline">
-                  <button name="id" value="{{ item.id }}" class="btn btn-danger btn-sm">Delete</button>
+                  <button name="id" value="{{ item.id_ }}" class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if in_progress_items is defined and in_progress_items|length > 0 %}
+        <h2>In Progress</h2>
+        <ul class="list-group mb-4">
+          {% for item in in_progress_items %}
+          <li>
+            <div>{{ item.title }}</div>
+            {%  if item.description|length > 0 %}
+              <div>{{ item.description }}</div>
+            {% endif %}
+            {%  if item.due is not none %}
+              <div>{{ item.due.day }} {{ item.due.strftime("%b %Y") }}</div>
+            {% endif %}
+            <div class="btn-group mr-2" role="group">
+              <form action="/complete-item" method="post" class="form-inline">
+                  <button name="id" value="{{ item.id_ }}" class="btn btn-success btn-sm" >Complete</button>
+              </form>
+            </div>
+            <div class="btn-group mr-2" role="group">
+              <form action="/delete-item" method="post" class="form-inline">
+                  <button name="id" value="{{ item.id_ }}" class="btn btn-danger btn-sm">Delete</button>
               </form>
             </div>
           </li>
@@ -37,7 +69,7 @@
                   {{ item.title }}
                   <div class="btn-group mr-2" role="group">
                     <form action="/delete-item" method="post" class="form-inline">
-                      <button name="id" value="{{ item.id }}" class="btn btn-danger btn-sm">Delete</button>
+                      <button name="id" value="{{ item.id_ }}" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                   </div>
               </li>
@@ -53,6 +85,8 @@
       <div class="form-group mx-sm-3 mb-2">
         <label for="title" class="sr-only">Title:</label>
         <input type="text" class="form-control" id="title" name="title" placeholder="Title" required>
+        <input type="text" class="form-control" id="description" name="description" placeholder="Description">
+        <input type="date" class="form-control" id="due-date" name="due-date">
       </div>
       <input type="submit" class="btn btn-primary mb-2" value="Add item">
     </form>
