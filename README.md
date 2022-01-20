@@ -44,7 +44,7 @@ The `.env` file is used by flask to set environment variables when running `flas
 development mode (which also enables features like hot reloading when you make a file change).
 
 The `.env` file also needs updating with the Trello API key and token created earlier, along with the board ID you are
-using for development.
+using for development. The board must have headings: "Not Started", "In Progress" and "Completed".
 
 ## Running the App
 
