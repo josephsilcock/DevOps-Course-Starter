@@ -33,7 +33,8 @@ class TrelloRequests:
             status=self._lists_ids_to_names[json["idList"]],
             title=json["name"],
             description=json["desc"],
-            due=datetime.strptime(json["due"][:10], "%Y-%m-%d") if json["due"] else None,
+            last_modification=datetime.fromisoformat(json["dateLastActivity"][:-1]),
+            due=datetime.fromisoformat(json["due"][:-1]) if json["due"] else None,
         )
 
     def _get(self, url: str, params: Dict[str, str]) -> requests.Response:
