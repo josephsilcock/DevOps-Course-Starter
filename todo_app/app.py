@@ -59,6 +59,3 @@ def create_app() -> Flask:
         return render_template("error.html")
 
     return app
-
-
-create_app()
