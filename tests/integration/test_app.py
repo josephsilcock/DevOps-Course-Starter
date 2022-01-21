@@ -27,9 +27,7 @@ class StubResponse:
 def patch_trello_start_requests():
     def _get(url, params):
         if url == f"https://api.trello.com/1/boards/{os.environ.get('TRELLO_BOARD_ID')}/lists":
-            return StubResponse(
-                [{"id": 1, "name": "Not Started"}, {"id": 2, "name": "In Progress"}, {"id": 3, "name": "Completed"}]
-            )
+            return StubResponse([{"id": id_, "name": status.value} for status, id_ in test_status.items()])
         return []
 
     with mock.patch(f"todo_app.data.trello_items.requests") as mock_requests:
@@ -159,8 +157,6 @@ def test_update_items_makes_correct_put(patch_trello_start_requests, client, res
             params={
                 "key": os.getenv("TRELLO_KEY"),
                 "token": os.getenv("TRELLO_TOKEN"),
-                "idList": test_status[
-                    Status.COMPLETED.value if endpoint == "/complete-item" else Status.IN_PROGRESS.value
-                ],
+                "idList": test_status[Status.COMPLETED if endpoint == "/complete-item" else Status.IN_PROGRESS],
             },
         )

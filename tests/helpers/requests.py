@@ -1,16 +1,16 @@
-from todo_app.data.items import Item
+from todo_app.data.items import Item, Status
 
 test_status = {
-    "Not Started": 1,
-    "In Progress": 2,
-    "Completed": 3,
+    Status.NOT_STARTED: 1,
+    Status.IN_PROGRESS: 2,
+    Status.COMPLETED: 3,
 }
 
 
 def item_to_json(item: Item):
     return {
         "id": item.id_,
-        "idList": test_status[item.status.value],
+        "idList": test_status[item.status],
         "name": item.title,
         "desc": item.description,
         "dateLastActivity": item.last_modification.isoformat(),
