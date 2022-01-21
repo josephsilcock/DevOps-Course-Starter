@@ -13,6 +13,10 @@ class TrelloRequests:
         self._board_id: str = os.getenv("TRELLO_BOARD_ID")
         self._params: Dict[str, str] = {"key": os.getenv("TRELLO_KEY"), "token": os.getenv("TRELLO_TOKEN")}
         self._url = f"https://api.trello.com/1"
+        self._lists_ids_to_names = None
+        self._names_to_list_ids = None
+
+    def init_lists(self):
         self._lists_ids_to_names = self._get_lists()
         self._names_to_list_ids = {v: k for k, v in self._lists_ids_to_names.items()}
 
@@ -26,8 +30,8 @@ class TrelloRequests:
             status=self._lists_ids_to_names[json["idList"]],
             title=json["name"],
             description=json["desc"],
-            last_modification=datetime.fromisoformat(json["dateLastActivity"][:-1]),
-            due=datetime.fromisoformat(json["due"][:-1]) if json["due"] else None,
+            last_modification=datetime.fromisoformat(json["dateLastActivity"][:19]),
+            due=datetime.fromisoformat(json["due"][:19]) if json["due"] else None,
         )
 
     @catch_response_failure

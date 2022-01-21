@@ -9,8 +9,10 @@ def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(Config())
 
+    trello_requests = TrelloRequests()
+
     try:
-        trello_requests = TrelloRequests()
+        trello_requests.init_lists()
     except ResponseError:
         redirect("/error")
 
