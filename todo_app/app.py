@@ -1,3 +1,5 @@
+from functools import wraps
+
 from flask import Flask, redirect, render_template, request
 
 from todo_app.data.exceptions import ResponseError
@@ -17,6 +19,7 @@ def create_app() -> Flask:
         redirect("/error")
 
     def _catch_request_errors(func):
+        @wraps(func)
         def wrap(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
@@ -25,12 +28,12 @@ def create_app() -> Flask:
 
         return wrap
 
-    @app.route("/", endpoint="index")
+    @app.route("/")
     @_catch_request_errors
     def index():
         return render_template("index.html", items=trello_requests.get_items())
 
-    @app.route("/add-item", endpoint="add_item_to_items", methods=["POST"])
+    @app.route("/add-item", methods=["POST"])
     @_catch_request_errors
     def add_item_to_items():
         trello_requests.add_item(
@@ -38,19 +41,19 @@ def create_app() -> Flask:
         )
         return redirect("/")
 
-    @app.route("/delete-item", endpoint="delete_item", methods=["POST"])
+    @app.route("/delete-item", methods=["POST"])
     @_catch_request_errors
     def delete_item():
         trello_requests.remove_item(request.values.get("id"))
         return redirect("/")
 
-    @app.route("/complete-item", endpoint="complete_item", methods=["POST"])
+    @app.route("/complete-item", methods=["POST"])
     @_catch_request_errors
     def complete_item():
         trello_requests.update_item_status(request.values.get("id"), Status.COMPLETED)
         return redirect("/")
 
-    @app.route("/start-item", endpoint="start_item", methods=["POST"])
+    @app.route("/start-item", methods=["POST"])
     @_catch_request_errors
     def start_item():
         trello_requests.update_item_status(request.values.get("id"), Status.IN_PROGRESS)
