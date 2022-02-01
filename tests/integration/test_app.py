@@ -11,6 +11,7 @@ from flask import request
 
 from tests.helpers.requests import item_to_json, test_status
 from todo_app import app
+from todo_app.data.exceptions import ResponseError
 from todo_app.data.items import Item, Status
 
 
@@ -58,10 +59,9 @@ def patch_get_items(items: List[Item]):
         yield mock_requests
 
 
+@pytest.mark.xfail(raises=ResponseError)
 def test_failing_trello_requests_startup_redirects_to_error(client):
-    response = client.get("/", follow_redirects=True)
-    assert response.status_code == 200
-    assert request.path == "/error"
+    client.get("/")
 
 
 def test_index_page_with_no_items(patch_trello_start_requests, client):
@@ -88,16 +88,16 @@ def test_index_page_with_to_do_items(patch_trello_start_requests, client):
 
 
 @pytest.mark.parametrize(
-    "data,error",
+    "data,response_ok",
     [
-        pytest.param({"title": "test"}, False, id="Just title"),
+        pytest.param({"title": "test"}, True, id="Just title"),
         pytest.param(
-            {"title": "test", "description": "test description", "due-date": "2022-01-23"}, False, id="Just title"
+            {"title": "test", "description": "test description", "due-date": "2022-01-23"}, True, id="Just title"
         ),
-        pytest.param({}, True, id="Bad request"),
+        pytest.param({}, False, id="Bad request"),
     ],
 )
-def test_add_items_makes_correct_post(patch_trello_start_requests, client, data, error):
+def test_add_items_makes_correct_post(patch_trello_start_requests, client, data, response_ok):
     def _post(url, params):
         return StubResponse([], params["name"] is not None)
 
@@ -106,7 +106,9 @@ def test_add_items_makes_correct_post(patch_trello_start_requests, client, data,
 
         response = client.post("/add-item", data=data, follow_redirects=True)
         assert response.status_code == 200
-        assert request.path == "/error" if error else "/"
+        assert request.path == ("/" if response_ok else "/add-item")
+        if not response_ok:
+            assert "Something went wrong" in response.data.decode()
         mock_requests.post.assert_called_with(
             "https://api.trello.com/1/cards",
             params={
@@ -130,7 +132,9 @@ def test_remove_items_makes_correct_delete(patch_trello_start_requests, client, 
 
         response = client.post("/delete-item", data={"id": 1}, follow_redirects=True)
         assert response.status_code == 200
-        assert request.path == "/" if response_ok else "/error"
+        assert request.path == ("/" if response_ok else "/delete-item")
+        if not response_ok:
+            assert "Something went wrong" in response.data.decode()
         mock_requests.delete.assert_called_with(
             "https://api.trello.com/1/cards/1",
             params={
@@ -151,7 +155,9 @@ def test_update_items_makes_correct_put(patch_trello_start_requests, client, res
 
         response = client.post(endpoint, data={"id": 1}, follow_redirects=True)
         assert response.status_code == 200
-        assert request.path == "/" if response_ok else "/error"
+        assert request.path == ("/" if response_ok else endpoint)
+        if not response_ok:
+            assert "Something went wrong" in response.data.decode()
         mock_requests.put.assert_called_with(
             "https://api.trello.com/1/cards/1",
             params={
