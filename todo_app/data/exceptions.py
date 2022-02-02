@@ -1,2 +1,6 @@
+from typing import Dict
+
+
 class ResponseError(Exception):
-    pass
+    def __init__(self, json: Dict):
+        self.json = json

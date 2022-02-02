@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, redirect, render_template, request
 
 from todo_app.data.exceptions import ResponseError
@@ -41,6 +43,6 @@ def create_app() -> Flask:
 
     @app.errorhandler(ResponseError)
     def error_page(e: ResponseError):
-        return render_template("error.html")
+        return render_template("error.html", json=json.dumps(e.json, indent=2))
 
     return app

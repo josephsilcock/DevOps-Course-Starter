@@ -9,7 +9,7 @@ def catch_response_failure(func: Callable[[Any], requests.Response]):
     def wrap(*args, **kwargs):
         r = func(*args, **kwargs)
         if not r.ok:
-            raise ResponseError
+            raise ResponseError(r.json())
         return r
 
     return wrap
