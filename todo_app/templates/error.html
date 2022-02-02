@@ -10,6 +10,9 @@
   <h2>Something went wrong :(</h2>
   <a href="/">Back to home</a>
 
-  <pre>{{ json }}</pre>
+  <div>
+    <a data-toggle="collapse" href="#collapseJson" role="button">Show response</a>
+    <pre class="collapse" id="collapseJson">{{ json }}</pre>
+  </div>
 
 {% endblock %}
