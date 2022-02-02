@@ -37,6 +37,13 @@ def patch_trello_start_requests():
 
 
 @pytest.fixture
+def patch_trello_error_start_requests():
+    with mock.patch(f"todo_app.data.trello_items.requests") as mock_requests:
+        mock_requests.get.side_effect = lambda url, params: StubResponse([], False)
+        yield
+
+
+@pytest.fixture
 def client():
     file_path = find_dotenv(".env.test")
     load_dotenv(file_path, override=True)
@@ -60,7 +67,7 @@ def patch_get_items(items: List[Item]):
 
 
 @pytest.mark.xfail(raises=ResponseError)
-def test_failing_trello_requests_startup_redirects_to_error(client):
+def test_failing_trello_requests_startup_redirects_to_error(patch_trello_error_start_requests, client):
     client.get("/")
 
 
