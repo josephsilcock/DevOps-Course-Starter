@@ -3,8 +3,10 @@
   remote_user: ec2-user
 
   tasks:
-    - name: Install Git
+    - name: Install Git and Python
       yum:
-        name: git
+        name:
+          - git
+          - python3
         state: present
       become: yes
