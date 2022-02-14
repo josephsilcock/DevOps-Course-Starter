@@ -9,8 +9,7 @@ def main(use_production: bool):
         os.system("curl -o install_poetry.py https://install.python-poetry.org")
         install_poetry_file = open("install_poetry.py").read().replace("sys.exit(main())", "main()")
         os.remove("install_poetry.py")
-        code = compile(install_poetry_file, "install_poetry.py", 'exec')
-        exec(code)
+        exec(compile(install_poetry_file, "install_poetry.py", "exec"))
 
     # Install Dependencies
     os.system("poetry install")
@@ -28,7 +27,7 @@ def main(use_production: bool):
 
     # Start App
     if use_production:
-        os.system("poetry run gunicorn --bind 0.0.0.0:80 \"wsgi:run()\" --logfile ~/todoapp.log")
+        os.system('poetry run gunicorn --bind 0.0.0.0:80 "wsgi:run()" --logfile ~/todoapp.log')
     else:
         os.system("poetry run flask run")
 
