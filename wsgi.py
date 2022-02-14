@@ -1,5 +1,9 @@
+import dotenv
+
 from todo_app.app import create_app
 
-if __name__ == "__main__":
+
+def run():
+    dotenv.load_dotenv()
     app = create_app()
-    app.run()
+    return app
