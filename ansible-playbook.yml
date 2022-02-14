@@ -1,3 +1,10 @@
 - name: Install To Do App on new web server
   hosts: webservers
   remote_user: ec2-user
+
+  tasks:
+    - name: Install Git
+      yum:
+        name: git
+        state: present
+      become: yes
