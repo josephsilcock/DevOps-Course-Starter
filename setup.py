@@ -1,11 +1,10 @@
 import os
 import shutil
-import ssl
-import requests
 
-gcontext = ssl.SSLContext()
 if shutil.which("poetry") is None:
-    code = compile(requests.get("https://install.python-poetry.org").content, "install_poetry.py", 'exec')
+    os.system("wget -o install_poetry.py https://install.python-poetry.org")
+    f = open("install_poetry.py").read()
+    code = compile(f, "install_poetry.py", 'exec')
     exec(code)
 
 os.system("poetry install")
