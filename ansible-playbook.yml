@@ -13,7 +13,7 @@
     - name: Install Poetry
       shell:
         cmd: curl -sSL https://install.python-poetry.org | python3 -
-        # make this not run all the time
+        creates: /home/{{ansible_ssh_user}}/.local/bin/poetry
     - name: Create To-Do App Directory
       file:
         path: /opt/todoapp
@@ -25,3 +25,7 @@
         repo: 'https://github.com/josephsilcock/DevOps-Course-Starter.git'
         dest: /opt/todoapp
         version: module-4
+    - name: Install Dependencies
+      command:
+        cmd: /home/{{ansible_ssh_user}}/.local/bin/poetry install
+        chdir: /opt/todoapp
