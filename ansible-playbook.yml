@@ -20,3 +20,8 @@
         state: directory
         mode: '777'
       become: yes
+    - name: Checkout latest To-Do App code
+      git:
+        repo: 'https://github.com/josephsilcock/DevOps-Course-Starter.git'
+        dest: /opt/todoapp
+        version: module-4
