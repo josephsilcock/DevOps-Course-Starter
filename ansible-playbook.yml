@@ -14,3 +14,9 @@
       shell:
         cmd: curl -sSL https://install.python-poetry.org | python3 -
         # make this not run all the time
+    - name: Create To-Do App Directory
+      file:
+        path: /opt/todoapp
+        state: directory
+        mode: '777'
+      become: yes
