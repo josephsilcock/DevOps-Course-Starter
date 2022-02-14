@@ -1,6 +1,19 @@
 - name: Install To Do App on new web server
   hosts: webservers
   remote_user: ec2-user
+  vars_prompt:
+    - name: secret_key
+      prompt: What is your secret key?
+      private: no
+    - name: trello_key
+      prompt: What is your trello key?
+      private: no
+    - name: trello_token
+      prompt: What is your trello token?
+      private: no
+    - name: trello_board_id
+      prompt: What is your trello board id?
+      private: no
 
   tasks:
     - name: Install Git and Python
@@ -29,3 +42,7 @@
       command:
         cmd: /home/{{ansible_ssh_user}}/.local/bin/poetry install
         chdir: /opt/todoapp
+    - name: Create .env file
+      template:
+        src: ./.env.j2
+        dest: /opt/todoapp/.env
