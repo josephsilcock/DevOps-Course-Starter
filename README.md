@@ -1,5 +1,12 @@
 # DevOps Apprenticeship: Project Exercise
 
+## Quick  Set-up
+
+The following script installs poetry, installs the dependencies and starts the app:
+```bash
+python3 setup.py
+```
+
 ## System Requirements
 
 The project uses poetry for Python to create an isolated environment and manage package dependencies. To prepare your 
@@ -9,13 +16,13 @@ commands (as instructed by the [poetry documentation](https://python-poetry.org/
 ### Poetry installation (Bash)
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
+curl -sSL https://install.python-poetry.org | python3 -
 ```
 
 ### Poetry installation (PowerShell)
 
 ```powershell
-(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -UseBasicParsing).Content | python -
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
 ```
 
 ## Prerequisite Setup
