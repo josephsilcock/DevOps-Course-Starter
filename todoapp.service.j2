@@ -1,0 +1,5 @@
+[Unit]
+Description=My To-Do App
+[Service]
+WorkingDirectory=/opt/todoapp
+ExecStart=/home/{{ ansible_ssh_user }}/.local/bin/poetry gunicorn --bind 0.0.0.0:80 "wsgi:run()" --logfile /home/{{ ansible_ssh_user }}/todoapp.log

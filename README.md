@@ -1,5 +1,12 @@
 # DevOps Apprenticeship: Project Exercise
 
+## Quick  Set-up
+
+The following script installs poetry, installs the dependencies and starts the app:
+```bash
+python3 setup.py
+```
+
 ## System Requirements
 
 The project uses poetry for Python to create an isolated environment and manage package dependencies. To prepare your 
@@ -9,13 +16,13 @@ commands (as instructed by the [poetry documentation](https://python-poetry.org/
 ### Poetry installation (Bash)
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
+curl -sSL https://install.python-poetry.org | python3 -
 ```
 
 ### Poetry installation (PowerShell)
 
 ```powershell
-(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -UseBasicParsing).Content | python -
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
 ```
 
 ## Prerequisite Setup
@@ -65,6 +72,20 @@ You should see output similar to the following:
  * Debugger PIN: 226-556-590
 ```
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.
+
+## Deploying on a VM
+
+There are scripts to deploy the app on a VM using ansible. The controller needs SSH access to the host, and ansible must
+be installed. If ansible is not already installed on the controller, install it using:
+```bash
+$ sudo pip install ansible
+```
+Add the IP address of the host machines to `ansible-inventory`, and change the `remote_user` in `ansible-playbook.yml`
+to the username of the host machines, then run the following to deploy the app:
+```bash
+ansible-playbook ansible-playbook.yml -i ansible-inventory
+```
+
 
 ## Testing
 

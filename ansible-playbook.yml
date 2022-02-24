@@ -1,0 +1,59 @@
+- name: Install To Do App on new web server
+  hosts: webservers
+  remote_user: ec2-user
+  vars_prompt:
+    - name: secret_key
+      prompt: What is your secret key?
+      private: no
+    - name: trello_key
+      prompt: What is your trello key?
+      private: no
+    - name: trello_token
+      prompt: What is your trello token?
+      private: no
+    - name: trello_board_id
+      prompt: What is your trello board id?
+      private: no
+
+  tasks:
+    - name: Install Git and Python
+      yum:
+        name:
+          - git
+          - python3
+        state: present
+      become: yes
+    - name: Install Poetry
+      shell:
+        cmd: curl -sSL https://install.python-poetry.org | python3 -
+        creates: ~/.local/bin/poetry
+    - name: Create To-Do App Directory
+      file:
+        path: /opt/todoapp
+        state: directory
+        mode: '777'
+      become: yes
+    - name: Checkout latest To-Do App code
+      git:
+        repo: 'https://github.com/josephsilcock/DevOps-Course-Starter.git'
+        dest: /opt/todoapp
+        version: module-4
+    - name: Install Dependencies
+      command:
+        cmd: ~/.local/bin/poetry install
+        chdir: /opt/todoapp
+    - name: Create .env file
+      template:
+        src: ./.env.j2
+        dest: /opt/todoapp/.env
+    - name: Copy todoapp.service
+      template:
+        src: ./todoapp.service.j2
+        dest: /etc/systemd/system/todoapp.service
+      become: yes
+    - name: Start the app
+      systemd:
+        state: started
+        name: todoapp
+        daemon_reload: yes
+      become: yes
