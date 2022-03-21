@@ -86,7 +86,6 @@ to the username of the host machines, then run the following to deploy the app:
 ansible-playbook ansible-playbook.yml -i ansible-inventory
 ```
 
-
 ## Testing
 
 Default test configurations are stored for both Visual Studio Code and Pycharm. Running these will run all the tests.
@@ -105,4 +104,16 @@ $ poetry run pytest tests/unit/data/test_items.py::test_item_view_completed_item
 To run a single parameter in a parameterised test, pass the id of the single test, e.g:
 ```bash
 $ poetry run pytest tests/unit/data/test_items.py::test_item_view_completed_items["single completed item"]
+```
+
+## Docker
+
+To create a docker image run:
+```bash
+docker build --tag todo-app .
+```
+
+To run the image:
+```bash
+docker run -d -p 8080:80 todo-app
 ```
