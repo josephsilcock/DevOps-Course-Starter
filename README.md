@@ -127,7 +127,7 @@ To create a docker image run:
 docker build --target development --tag todo-app:dev .
 ```
 
-To run the image:
+To run the image (note, this also runs a persistent test container):
 #### Using Docker Compose
 ```bash
 docker compose up -d

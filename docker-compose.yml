@@ -1,5 +1,5 @@
 services:
-  todo-app:
+  todo-app-dev:
     build: .
     ports:
       - 5000:5000
@@ -9,3 +9,15 @@ services:
         source: ./todo_app
         target: /todo-app/todo_app
     image: todo-app:dev
+  todo-app-test:
+    build: .
+    env_file: ./.env.test
+    volumes:
+      - type: bind
+        source: ./todo_app
+        target: /todo-app/todo_app
+      - type: bind
+        source: ./tests
+        target: /todo-app/tests
+    image: todo-app:dev
+    entrypoint: watchmedo shell-command --patterns="*.py" --recursive --command "poetry run pytest"
