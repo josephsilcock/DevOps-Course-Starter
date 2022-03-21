@@ -124,11 +124,16 @@ docker run -d -p 5000:80 --env-file ./.env todo-app:prod
 
 To create a docker image run:
 ```bash
-docker build --target devlopment --tag todo-app:dev .
+docker build --target development --tag todo-app:dev .
 ```
 
 To run the image:
+#### Using Docker Compose
+```bash
+docker compose up -d
+```
 
+#### Using docker run
 UNIX systems (and powershell):
 ```bash
 docker run -d -p 5000:5000 --env-file ./.env --mount type=bind,source="$(pwd)"/todo_app,target=/todo-app/todo_app todo-app:dev
