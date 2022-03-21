@@ -115,5 +115,5 @@ docker build --tag todo-app .
 
 To run the image:
 ```bash
-docker run -d -p 8080:80 todo-app
+docker run -d -p 8080:80 --env-file ./.env todo-app
 ```
