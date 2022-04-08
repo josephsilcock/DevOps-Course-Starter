@@ -86,7 +86,6 @@ to the username of the host machines, then run the following to deploy the app:
 ansible-playbook ansible-playbook.yml -i ansible-inventory
 ```
 
-
 ## Testing
 
 Default test configurations are stored for both Visual Studio Code and Pycharm. Running these will run all the tests.
@@ -105,4 +104,42 @@ $ poetry run pytest tests/unit/data/test_items.py::test_item_view_completed_item
 To run a single parameter in a parameterised test, pass the id of the single test, e.g:
 ```bash
 $ poetry run pytest tests/unit/data/test_items.py::test_item_view_completed_items["single completed item"]
+```
+
+## Docker
+
+### Production
+
+To create a docker image run:
+```bash
+docker build --target production --tag todo-app:prod .
+```
+
+To run the image:
+```bash
+docker run -d -p 5000:80 --env-file ./.env todo-app:prod
+```
+
+### Development
+
+To create a docker image run:
+```bash
+docker build --target development --tag todo-app:dev .
+```
+
+To run the image (note, this also runs a persistent test container):
+#### Using Docker Compose
+```bash
+docker compose up -d
+```
+
+#### Using docker run
+UNIX systems (and powershell):
+```bash
+docker run -d -p 5000:5000 --env-file ./.env --mount type=bind,source="$(pwd)"/todo_app,target=/todo-app/todo_app todo-app:dev
+```
+
+Windows (CMD):
+```bash
+docker run -d -p 5000:5000 --env-file ./.env --mount type=bind,source=C:\Path\To\App\todo_app,target=/todo-app/todo_app todo-app:dev
 ```

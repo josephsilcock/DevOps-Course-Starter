@@ -37,7 +37,6 @@
       git:
         repo: 'https://github.com/josephsilcock/DevOps-Course-Starter.git'
         dest: /opt/todoapp
-        version: module-4
     - name: Install Dependencies
       command:
         cmd: ~/.local/bin/poetry install

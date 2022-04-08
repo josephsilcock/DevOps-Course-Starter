@@ -1,0 +1,14 @@
+.git/
+.github/
+.run/
+.vscode/
+scripts/
+tests/
+.env
+.env.j2
+.env.template
+.env.test
+ansible-inventory
+ansible-playbook.yml
+setup.py
+todoapp.service.j2
