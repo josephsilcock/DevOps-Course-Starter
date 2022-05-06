@@ -12,7 +12,7 @@ class TrelloRequests:
     def __init__(self):
         self._board_id: str = os.getenv("TRELLO_BOARD_ID")
         self._params: Dict[str, str] = {"key": os.getenv("TRELLO_KEY"), "token": os.getenv("TRELLO_TOKEN")}
-        self._url = f"https://api.trello.com/1"
+        self._url = "https://api.trello.com/1"
         self._lists_ids_to_names = None
         self._names_to_list_ids = None
 
@@ -22,7 +22,7 @@ class TrelloRequests:
 
     def _get_lists(self) -> Dict[str, Status]:
         r = self._get(f"{self._url}/boards/{self._board_id}/lists", self._params)
-        return {l["id"]: Status(l["name"]) for l in r.json()}
+        return {list["id"]: Status(list["name"]) for list in r.json()}
 
     def _json_to_item(self, json: Dict[str, str]) -> Item:
         return Item(

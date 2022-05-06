@@ -31,14 +31,14 @@ def patch_trello_start_requests():
             return StubResponse([{"id": id_, "name": status.value} for status, id_ in test_status.items()])
         return []
 
-    with mock.patch(f"todo_app.data.trello_items.requests") as mock_requests:
+    with mock.patch("todo_app.data.trello_items.requests") as mock_requests:
         mock_requests.get.side_effect = _get
         yield
 
 
 @pytest.fixture
 def patch_trello_error_start_requests():
-    with mock.patch(f"todo_app.data.trello_items.requests") as mock_requests:
+    with mock.patch("todo_app.data.trello_items.requests") as mock_requests:
         mock_requests.get.side_effect = lambda url, params: StubResponse([], False)
         yield
 
@@ -61,7 +61,7 @@ def patch_get_items(items: List[Item]):
             return StubResponse([item_to_json(item) for item in items])
         return []
 
-    with mock.patch(f"todo_app.data.trello_items.requests") as mock_requests:
+    with mock.patch("todo_app.data.trello_items.requests") as mock_requests:
         mock_requests.get.side_effect = _get
         yield mock_requests
 
