@@ -36,12 +36,12 @@ def patch_today():
         pytest.param([_COMPLETED_ITEM], [_COMPLETED_ITEM], id="single completed item"),
         pytest.param(
             [_COMPLETED_ITEM, _IN_PROGRESS_ITEM, _NOT_STARTED_ITEM],
-            [_COMPLETED_ITEM],
+            [],
             id="completed item, and other different status items",
         ),
         pytest.param(
             [_COMPLETED_ITEM_FINISHED_EARLIER, _COMPLETED_ITEM],
-            [_COMPLETED_ITEM, _COMPLETED_ITEM_FINISHED_EARLIER],
+            [],
             id="orders completed items by completed date properly",
         ),
     ],
