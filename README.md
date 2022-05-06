@@ -1,3 +1,5 @@
+![Build Status](https://github.com/josephsilcock/DevOps-Course-Starter/actions/workflows/ci-pipeline.yml/badge.svg)
+
 # DevOps Apprenticeship: Project Exercise
 
 * [Set-up](documentation/SetUp.md)
