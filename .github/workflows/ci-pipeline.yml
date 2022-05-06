@@ -24,6 +24,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run Snyk
-        uses: snyk/actions/node@master
+        uses: snyk/actions/python@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
