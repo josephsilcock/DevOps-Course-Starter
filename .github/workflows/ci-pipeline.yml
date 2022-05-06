@@ -27,5 +27,9 @@ jobs:
         uses: snyk/actions/python@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      - name: Lint
-        run: bash ./scripts/lint
+      - name: Black
+        uses: psf/black@stable
+        with:
+          options: "--check"
+          src: "./todo_app ./tests"
+          version: "21.5b1"
