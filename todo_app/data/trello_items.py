@@ -22,7 +22,7 @@ class TrelloRequests:
 
     def _get_lists(self) -> Dict[str, Status]:
         r = self._get(f"{self._url}/boards/{self._board_id}/lists", self._params)
-        return {list["id"]: Status(list["name"]) for list in r.json()}
+        return {_list["id"]: Status(_list["name"]) for _list in r.json()}
 
     def _json_to_item(self, json: Dict[str, str]) -> Item:
         return Item(
