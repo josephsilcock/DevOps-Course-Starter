@@ -17,3 +17,13 @@ jobs:
         run: docker build --target development --tag todo-app:test .
       - name: Unit and Integration Tests
         run: docker run --env-file ./.env.test --mount type=bind,source="$(pwd)"/todo_app,target=/todo-app/todo_app --mount type=bind,source="$(pwd)"/tests,target=/todo-app/tests --entrypoint poetry todo-app:test run pytest
+  static:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Run Snyk
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
