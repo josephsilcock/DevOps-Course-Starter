@@ -32,4 +32,3 @@ jobs:
         with:
           options: "--check"
           src: "./todo_app ./tests"
-          version: "21.5b1"
