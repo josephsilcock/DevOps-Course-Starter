@@ -16,7 +16,9 @@ jobs:
       - name: Build
         run: docker build --target development --tag todo-app:test .
       - name: Unit and Integration Tests
-        run: docker run --env-file ./.env.test --mount type=bind,source="$(pwd)"/todo_app,target=/todo-app/todo_app --mount type=bind,source="$(pwd)"/tests,target=/todo-app/tests --entrypoint poetry todo-app:test run pytest
+        run: docker run --env-file ./.env.test --mount type=bind,source="$(pwd)"/todo_app,target=/todo-app/todo_app --mount type=bind,source="$(pwd)"/tests,target=/todo-app/tests --entrypoint poetry todo-app:test run pytest --cov-report xml --cov ./todo_app
+      - name: Publish Coverage
+        uses: codecov/codecov-action@v2
   static:
     name: Static Analysis
     runs-on: ubuntu-latest
