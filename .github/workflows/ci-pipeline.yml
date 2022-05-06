@@ -19,6 +19,8 @@ jobs:
         run: docker run --env-file ./.env.test --mount type=bind,source="$(pwd)"/todo_app,target=/todo-app/todo_app --mount type=bind,source="$(pwd)"/tests,target=/todo-app/tests --entrypoint poetry todo-app:test run pytest --cov-report xml --cov ./todo_app
       - name: Publish Coverage
         uses: codecov/codecov-action@v2
+        with:
+          files: ./coverage.xml
   static:
     name: Static Analysis
     runs-on: ubuntu-latest
