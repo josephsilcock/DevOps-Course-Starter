@@ -1,8 +1,9 @@
 name: Continuous Integration
 on: [push]
 jobs:
- build:
-   name: Build and test
-   runs-on: ubuntu-latest
-   steps:
-     - run: docker build --target development .
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: docker build --target development .
