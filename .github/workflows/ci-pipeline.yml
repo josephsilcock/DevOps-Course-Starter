@@ -10,4 +10,4 @@ jobs:
       - name: Build
         run: docker build --target development --tag todo-app:test .
       - name: Unit and Integration Tests
-        run: docker run --env-file ./.env.test --mount type=bind,source="$(pwd)"/todo_app,target=/todo-app/todo_app todo-app:test --entrypoint poetry run pytest
+        run: docker run --env-file ./.env.test --mount type=bind,source="$(pwd)"/todo_app,target=/todo-app/todo_app --entrypoint poetry todo-app:test run pytest
