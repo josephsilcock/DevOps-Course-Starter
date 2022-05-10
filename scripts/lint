@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+echo "===]> Info: Running flake8..."
+poetry run flake8 todo_app tests
+echo "===]> Info: Running black..."
+poetry run black --check todo_app tests
