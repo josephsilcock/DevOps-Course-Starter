@@ -63,6 +63,10 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: heroku container:login
       - name: Push image to Heroku
-        run: heroku container:push -a todo-app-jjs web
+        run: |
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/todo-app registry.heroku.com/todo-app-jjs/web
+          docker push registry.heroku.com/todo-app-jjs/web
       - name: Release on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: heroku container:release web -a todo-app-jjs
