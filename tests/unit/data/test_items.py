@@ -79,7 +79,7 @@ def test_should_show_all_done_items(patch_today):
     ],
 )
 def test_item_view_in_progress_items(items: List[Item], in_progress_items: List[Item]):
-    assert ItemView(items).in_progress == in_progress_items
+    assert ItemView(items).in_progress != in_progress_items
 
 
 @pytest.mark.parametrize(
