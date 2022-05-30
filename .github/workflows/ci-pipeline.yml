@@ -58,6 +58,10 @@ jobs:
           target: production
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:latest , ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:${{ github.sha }}
+      - name: Login to Heroku Container Registry
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
       - name: Push image to Heroku
         run: |
           docker tag ${{ secrets.DOCKERHUB_USERNAME }}/todo-app registry.heroku.com/todo-app-jjs/web
