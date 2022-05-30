@@ -67,4 +67,4 @@ jobs:
           docker tag ${{ secrets.DOCKERHUB_USERNAME }}/todo-app registry.heroku.com/todo-app-jjs/web
           docker push registry.heroku.com/todo-app-jjs/web
       - name: Release on Heroku
-        run: heroku container:release web
+        run: heroku container:release web -a todo-app-jjs
