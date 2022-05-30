@@ -59,10 +59,8 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:latest , ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:${{ github.sha }}
       - name: Login to Heroku Container Registry
-        run: docker login --username _ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
-      - name: Push image to Heroku
         run: |
+          docker login --username _ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
           docker tag ${{ secrets.DOCKERHUB_USERNAME }}/todo-app registry.heroku.com/todo-app-jjs/web
           docker push registry.heroku.com/todo-app-jjs/web
-      - name: Release on Heroku
-        run: heroku container:release web -a todo-app-jjs
+          heroku container:release web -a todo-app-jjs
