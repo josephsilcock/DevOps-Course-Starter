@@ -38,7 +38,7 @@ jobs:
         run: docker build --target development --tag todo-app:test .
       - name: Lint
         run: docker run --mount type=bind,source="$(pwd)",target=/todo-app --entrypoint bash todo-app:test ./scripts/lint
-  deploy:
+  deploy_docker:
     name: Deploy to Docker Hub
     runs-on: ubuntu-latest
 #    if: github.ref == 'refs/heads/main'
@@ -58,3 +58,14 @@ jobs:
           target: production
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:latest , ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:${{ github.sha }}
+  deploy_heroku:
+    name: Deploy to Heroku
+    runs-on: ubuntu-latest
+#    if: github.ref == 'refs/heads/main'
+#    needs: [build, static]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to Heroku Container Registry
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
