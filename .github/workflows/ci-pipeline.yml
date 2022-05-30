@@ -57,4 +57,4 @@ jobs:
           context: .
           target: production
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:latest , ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:${{ GITHUB_SHA }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:latest , ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:${{ github.sha }}
