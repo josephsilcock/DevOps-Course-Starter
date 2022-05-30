@@ -38,3 +38,11 @@ jobs:
         run: docker build --target development --tag todo-app:test .
       - name: Lint
         run: docker run --mount type=bind,source="$(pwd)",target=/todo-app --entrypoint bash todo-app:test ./scripts/lint
+  deploy:
+    name: Deploy to Docker Hub
+    runs-on: ubuntu-latest
+#    if: github.ref == 'refs/heads/master'
+    needs: [build, static]
+    steps:
+      - name: Test
+        run: echo "Deploying"
