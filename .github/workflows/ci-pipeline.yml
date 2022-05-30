@@ -42,7 +42,7 @@ jobs:
     name: Deploy to Docker Hub
     runs-on: ubuntu-latest
 #    if: github.ref == 'refs/heads/main'
-    needs: [build, static]
+#    needs: [build, static]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -58,14 +58,11 @@ jobs:
           target: production
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:latest , ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:${{ github.sha }}
-  deploy_heroku:
-    name: Deploy to Heroku
-    runs-on: ubuntu-latest
-#    if: github.ref == 'refs/heads/main'
-#    needs: [build, static]
-    steps:
-      - uses: actions/checkout@v3
       - name: Login to Heroku Container Registry
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: heroku container:login
+      - name: Push image to Heroku
+        run: |
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/todo-app registry.heroku.com/todo-app-jjs/web
+          docker push registry.heroku.com/todo-app-jjs/web
