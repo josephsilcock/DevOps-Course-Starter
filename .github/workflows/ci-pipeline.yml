@@ -47,6 +47,7 @@ jobs:
   deploy_docker:
     name: Deploy to Docker Hub
     runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
     needs: [build, static]
     steps:
       - name: Checkout
