@@ -1,5 +1,7 @@
 # Architecture Diagrams
 
+<!--- edit svgs using draw.io https://draw.io/ -->
+
 ## Context Diagram
 ![Context Diagram](./resources/ContextDiagram.svg)
 

@@ -8,11 +8,10 @@ commands (as instructed by the [poetry documentation](https://python-poetry.org/
 
 ### Prerequisites
 
-#### Trello
+#### MongoDB
 
-We use [Trello's](https://trello.com/) API to save and fetch to-do tasks. In order to call their API, you need to first 
-[create an account](https://trello.com/signup), then generate an API key and token by following the 
-[instructions here](https://trello.com/app-key).
+We use a [MongoDB](https://www.mongodb.com/) database store to-do tasks. In order to use this, you can [download 
+MongoDB locally](https://www.mongodb.com/try/download/), or use a cloud based version.
 
 #### .env File
 
