@@ -1,7 +1,6 @@
 import os
-from dataclasses import replace
 from datetime import datetime
-from typing import Dict, List, Union, Any, Mapping
+from typing import Dict, List
 
 import mongomock
 import pymongo
@@ -10,7 +9,6 @@ from dotenv import find_dotenv, load_dotenv
 from flask import request
 from pymongo.collection import Collection
 
-from tests.helpers.requests import test_status
 from todo_app import app
 from todo_app.data.items import Item, Status
 
@@ -43,7 +41,7 @@ def collection() -> Collection:
     return db["items"]
 
 
-def set_db_items(collection: Collection,items: List[Item]):
+def set_db_items(collection: Collection, items: List[Item]):
     collection.insert_many(
         [
             {
@@ -70,8 +68,12 @@ def test_index_page_with_no_items(client):
 
 def test_index_page_with_to_do_items(client, collection):
     _COMPLETED_ITEM = Item("test id", "test name", "test description", Status.COMPLETED, datetime(2022, 1, 21), None)
-    _IN_PROGRESS_ITEM = Item("test id2", "test name", "test description", Status.IN_PROGRESS, datetime(2022, 1, 21), None)
-    _NOT_STARTED_ITEM = Item("test id3", "test name", "test description", Status.NOT_STARTED, datetime(2022, 1, 21), None)
+    _IN_PROGRESS_ITEM = Item(
+        "test id2", "test name", "test description", Status.IN_PROGRESS, datetime(2022, 1, 21), None
+    )
+    _NOT_STARTED_ITEM = Item(
+        "test id3", "test name", "test description", Status.NOT_STARTED, datetime(2022, 1, 21), None
+    )
     set_db_items(collection, [_COMPLETED_ITEM, _IN_PROGRESS_ITEM, _NOT_STARTED_ITEM])
 
     response = client.get("/")
@@ -102,10 +104,12 @@ def test_add_items_makes_correct_post(client, data):
 
 
 def test_remove_items_makes_correct_delete(client, collection):
-    set_db_items(collection, [
-        Item("delete id", "to be deleted", "test description", Status.COMPLETED, datetime(2022, 1, 21), None),
-        Item("test id2", "to remain", "test description", Status.COMPLETED, datetime(2022, 1, 21), None),
-    ]
+    set_db_items(
+        collection,
+        [
+            Item("delete id", "to be deleted", "test description", Status.COMPLETED, datetime(2022, 1, 21), None),
+            Item("test id2", "to remain", "test description", Status.COMPLETED, datetime(2022, 1, 21), None),
+        ],
     )
 
     response = client.post("/delete-item", data={"id": "delete id"}, follow_redirects=True)
@@ -121,7 +125,9 @@ def test_remove_items_makes_correct_delete(client, collection):
 
 @pytest.mark.parametrize("endpoint", ["/complete-item", "/start-item"])
 def test_update_items_makes_correct_update(client, collection, endpoint):
-    set_db_items(collection, [Item("test id", "test name", "test description", Status.NOT_STARTED, datetime(2022, 1, 21), None)])
+    set_db_items(
+        collection, [Item("test id", "test name", "test description", Status.NOT_STARTED, datetime(2022, 1, 21), None)]
+    )
 
     response = client.post(endpoint, data={"id": "test id"}, follow_redirects=True)
     assert response.status_code == 200
