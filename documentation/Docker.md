@@ -11,6 +11,8 @@ Simply run:
 ```bash
 docker compose up -d
 ```
+> **_NOTE:_**  This includes a MongoDb image, and will connect to this, ignoring the value for 
+> `MONGODB_CONNECTION_STRING` in the env file.
 
 ### Manually
 
