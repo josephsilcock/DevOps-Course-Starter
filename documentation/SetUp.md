@@ -13,6 +13,8 @@ commands (as instructed by the [poetry documentation](https://python-poetry.org/
 We use a [MongoDB](https://www.mongodb.com/) database store to-do tasks. In order to use this, you can [download 
 MongoDB locally](https://www.mongodb.com/try/download/), or use a cloud based version.
 
+An alternative option is to use [MongoDB in docker](Docker.md#mongodb).
+
 #### .env File
 
 You'll also need to clone a new `.env` file from the `.env.template` to store local configuration options. This is a 
