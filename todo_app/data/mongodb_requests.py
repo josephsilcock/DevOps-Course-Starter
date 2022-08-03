@@ -2,14 +2,14 @@ import os
 from datetime import datetime
 from typing import Dict, Union
 
-from pymongo import MongoClient
+import pymongo
 
 from todo_app.data.items import Item, ItemView, Status
 
 
 class MongoDbRequests:
     def __init__(self):
-        client = MongoClient(os.getenv("MONGODB_CONNECTION_STRING"))
+        client = pymongo.MongoClient(os.getenv("MONGODB_CONNECTION_STRING"))
         db = client[os.getenv("DB_NAME")]
         self.collection = db["items"]
 
@@ -38,6 +38,7 @@ class MongoDbRequests:
         )
 
     def remove_item(self, id_: str) -> None:
+        print(id_)
         self.collection.delete_one({"_id": id_})
 
     def update_item_status(self, id_: str, new_status: Status) -> None:
