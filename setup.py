@@ -18,9 +18,8 @@ def main(use_production: bool):
     if not os.path.exists(".env"):
         env_file = open(".env.template").read()
         env_file = env_file.replace("secret-key", input("What is the secret key? "))
-        env_file = env_file.replace("trello-key", input("What is the trello key? "))
-        env_file = env_file.replace("trello-token", input("What is the trello token? "))
-        env_file = env_file.replace("trello-board-id", input("What is the trello board id? "))
+        env_file = env_file.replace("db-name", input("What is the Database name? "))
+        env_file = env_file.replace("mongodb-connection-string", input("MongoDB connection string? "))
 
         with open(".env", "w+") as f:
             print(env_file, file=f)
