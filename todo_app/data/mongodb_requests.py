@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Dict, Union
 
 import pymongo
+from bson import ObjectId
 
 from todo_app.data.items import Item, ItemView, Status
 
@@ -38,8 +39,9 @@ class MongoDbRequests:
         )
 
     def remove_item(self, id_: str) -> None:
-        print(id_)
-        self.collection.delete_one({"_id": id_})
+        self.collection.delete_one({"_id": ObjectId(id_)})
 
     def update_item_status(self, id_: str, new_status: Status) -> None:
-        self.collection.update_one({"_id": id_}, {"$set": {"status": new_status.value, "lastModified": datetime.now()}})
+        self.collection.update_one(
+            {"_id": ObjectId(id_)}, {"$set": {"status": new_status.value, "lastModified": datetime.now()}}
+        )
