@@ -5,14 +5,11 @@
     - name: secret_key
       prompt: What is your secret key?
       private: no
-    - name: trello_key
-      prompt: What is your trello key?
+    - name: mongodb_connection_string
+      prompt: What is your MongoDB connection string?
       private: no
-    - name: trello_token
-      prompt: What is your trello token?
-      private: no
-    - name: trello_board_id
-      prompt: What is your trello board id?
+    - name: db_name
+      prompt: What is your MongoDB database name?
       private: no
 
   tasks:

@@ -1,17 +1,16 @@
-import contextlib
 import os
-from dataclasses import replace
 from datetime import datetime
 from typing import Dict, List
-from unittest import mock
 
+import mongomock
+import pymongo
 import pytest
+from bson import ObjectId
 from dotenv import find_dotenv, load_dotenv
 from flask import request
+from pymongo.collection import Collection
 
-from tests.helpers.requests import item_to_json, test_status
 from todo_app import app
-from todo_app.data.exceptions import ResponseError
 from todo_app.data.items import Item, Status
 
 
@@ -25,151 +24,128 @@ class StubResponse:
 
 
 @pytest.fixture
-def patch_trello_start_requests():
-    def _get(url, params):
-        if url == f"https://api.trello.com/1/boards/{os.environ.get('TRELLO_BOARD_ID')}/lists":
-            return StubResponse([{"id": id_, "name": status.value} for status, id_ in test_status.items()])
-        return []
-
-    with mock.patch("todo_app.data.trello_items.requests") as mock_requests:
-        mock_requests.get.side_effect = _get
-        yield
-
-
-@pytest.fixture
-def patch_trello_error_start_requests():
-    with mock.patch("todo_app.data.trello_items.requests") as mock_requests:
-        mock_requests.get.side_effect = lambda url, params: StubResponse([], False)
-        yield
-
-
-@pytest.fixture
 def client():
     file_path = find_dotenv(".env.test")
     load_dotenv(file_path, override=True)
 
-    test_app = app.create_app()
+    with mongomock.patch(servers=(("fakemongo.com", 27017),)):
+        test_app = app.create_app()
 
-    with test_app.test_client() as client:
-        yield client
-
-
-@contextlib.contextmanager
-def patch_get_items(items: List[Item]):
-    def _get(url, params):
-        if url == f"https://api.trello.com/1/boards/{os.environ.get('TRELLO_BOARD_ID')}/cards":
-            return StubResponse([item_to_json(item) for item in items])
-        return []
-
-    with mock.patch("todo_app.data.trello_items.requests") as mock_requests:
-        mock_requests.get.side_effect = _get
-        yield mock_requests
+        with test_app.test_client() as client:
+            yield client
 
 
-@pytest.mark.xfail(raises=ResponseError)
-def test_failing_trello_requests_startup_redirects_to_error(patch_trello_error_start_requests, client):
-    client.get("/")
+@pytest.fixture
+def collection() -> Collection:
+    client = pymongo.MongoClient(os.getenv("MONGODB_CONNECTION_STRING"))
+    db = client[os.getenv("DB_NAME")]
+    return db["items"]
 
 
-def test_index_page_with_no_items(patch_trello_start_requests, client):
-    with patch_get_items([]):
-        response = client.get("/")
-        assert response.status_code == 200
-        assert "To Do" not in response.data.decode()
-        assert "In Progress" not in response.data.decode()
-        assert "Completed" not in response.data.decode()
-        assert "Add item to do" in response.data.decode()
+def set_db_items(collection: Collection, items: List[Item]):
+    collection.insert_many(
+        [
+            {
+                "_id": ObjectId(item.id_),
+                "title": item.title,
+                "status": item.status.value,
+                "description": item.description,
+                "due": item.due,
+                "last_modified": item.last_modification,
+            }
+            for item in items
+        ]
+    )
 
 
-def test_index_page_with_to_do_items(patch_trello_start_requests, client):
-    _COMPLETED_ITEM = Item("test id", "test name", "test description", Status.COMPLETED, datetime(2022, 1, 21), None)
-    _IN_PROGRESS_ITEM = replace(_COMPLETED_ITEM, status=Status.IN_PROGRESS)
-    _NOT_STARTED_ITEM = replace(_COMPLETED_ITEM, status=Status.NOT_STARTED)
-    with patch_get_items([_COMPLETED_ITEM, _IN_PROGRESS_ITEM, _NOT_STARTED_ITEM]):
-        response = client.get("/")
-        assert response.status_code == 200
-        assert "To Do" in response.data.decode()
-        assert "In Progress" in response.data.decode()
-        assert "Complete Items" in response.data.decode()
-        assert "Add item to do" in response.data.decode()
+def test_index_page_with_no_items(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "To Do" not in response.data.decode()
+    assert "In Progress" not in response.data.decode()
+    assert "Completed" not in response.data.decode()
+    assert "Add item to do" in response.data.decode()
+
+
+def test_index_page_with_to_do_items(client, collection):
+    _COMPLETED_ITEM = Item(
+        "62f646a4dc7d350ccd91b02a", "test name", "test description", Status.COMPLETED, datetime(2022, 1, 21), None
+    )
+    _IN_PROGRESS_ITEM = Item(
+        "62f646a4dc7d350ccd91b02b", "test name", "test description", Status.IN_PROGRESS, datetime(2022, 1, 21), None
+    )
+    _NOT_STARTED_ITEM = Item(
+        "62f646a4dc7d350ccd91b02c", "test name", "test description", Status.NOT_STARTED, datetime(2022, 1, 21), None
+    )
+    set_db_items(collection, [_COMPLETED_ITEM, _IN_PROGRESS_ITEM, _NOT_STARTED_ITEM])
+
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "To Do" in response.data.decode()
+    assert "In Progress" in response.data.decode()
+    assert "Complete Items" in response.data.decode()
+    assert "Add item to do" in response.data.decode()
 
 
 @pytest.mark.parametrize(
-    "data,response_ok",
+    "data",
     [
-        pytest.param({"title": "test"}, True, id="Just title"),
+        pytest.param({"title": "testtitle", "description": "", "due-date": ""}, id="Just title"),
         pytest.param(
-            {"title": "test", "description": "test description", "due-date": "2022-01-23"}, True, id="Just title"
+            {"title": "testtitle", "description": "test description", "due-date": "2022-01-23"}, id="Just title"
         ),
-        pytest.param({}, False, id="Bad request"),
     ],
 )
-def test_add_items_makes_correct_post(patch_trello_start_requests, client, data, response_ok):
-    def _post(url, params):
-        return StubResponse([], params["name"] is not None)
-
-    with patch_get_items([]) as mock_requests:
-        mock_requests.post.side_effect = _post
-
-        response = client.post("/add-item", data=data, follow_redirects=True)
-        assert response.status_code == 200
-        assert request.path == ("/" if response_ok else "/add-item")
-        if not response_ok:
-            assert "Something went wrong" in response.data.decode()
-        mock_requests.post.assert_called_with(
-            "https://api.trello.com/1/cards",
-            params={
-                "key": os.getenv("TRELLO_KEY"),
-                "token": os.getenv("TRELLO_TOKEN"),
-                "name": data.get("title"),
-                "idList": test_status[Status.NOT_STARTED],
-                "desc": data.get("description"),
-                "due": data.get("due-date"),
-            },
-        )
+def test_add_items_makes_correct_post(client, data):
+    response = client.post("/add-item", data=data, follow_redirects=True)
+    assert response.status_code == 200
+    assert request.path == "/"
+    assert "To Do" in response.data.decode()
+    assert "In Progress" not in response.data.decode()
+    assert "Complete Items" not in response.data.decode()
+    assert data["title"] in response.data.decode()
 
 
-@pytest.mark.parametrize("response_ok", [True, False])
-def test_remove_items_makes_correct_delete(patch_trello_start_requests, client, response_ok):
-    def _delete(url, params):
-        return StubResponse([], response_ok)
+def test_remove_items_makes_correct_delete(client, collection):
+    delete_id = "62f646a4dc7d350ccd91b02a"
 
-    with patch_get_items([]) as mock_requests:
-        mock_requests.delete.side_effect = _delete
+    set_db_items(
+        collection,
+        [
+            Item(delete_id, "to be deleted", "test description", Status.COMPLETED, datetime(2022, 1, 21), None),
+            Item(
+                "62f646a4dc7d350ccd91b02b",
+                "to remain",
+                "test description",
+                Status.COMPLETED,
+                datetime(2022, 1, 21),
+                None,
+            ),
+        ],
+    )
 
-        response = client.post("/delete-item", data={"id": 1}, follow_redirects=True)
-        assert response.status_code == 200
-        assert request.path == ("/" if response_ok else "/delete-item")
-        if not response_ok:
-            assert "Something went wrong" in response.data.decode()
-        mock_requests.delete.assert_called_with(
-            "https://api.trello.com/1/cards/1",
-            params={
-                "key": os.getenv("TRELLO_KEY"),
-                "token": os.getenv("TRELLO_TOKEN"),
-            },
-        )
+    response = client.post("/delete-item", data={"id": delete_id}, follow_redirects=True)
+
+    assert response.status_code == 200
+    assert request.path == "/"
+    assert "To Do" not in response.data.decode()
+    assert "In Progress" not in response.data.decode()
+    assert "Complete Items" in response.data.decode()
+    assert "to be deleted" not in response.data.decode()
+    assert "to remain" in response.data.decode()
 
 
-@pytest.mark.parametrize("response_ok", [True, False])
 @pytest.mark.parametrize("endpoint", ["/complete-item", "/start-item"])
-def test_update_items_makes_correct_put(patch_trello_start_requests, client, response_ok, endpoint):
-    def _put(url, params):
-        return StubResponse([], response_ok)
+def test_update_items_makes_correct_update(client, collection, endpoint):
+    test_id = "62f646a4dc7d350ccd91b02a"
+    set_db_items(
+        collection, [Item(test_id, "test name", "test description", Status.NOT_STARTED, datetime(2022, 1, 21), None)]
+    )
 
-    with patch_get_items([]) as mock_requests:
-        mock_requests.put.side_effect = _put
-
-        response = client.post(endpoint, data={"id": 1}, follow_redirects=True)
-        assert response.status_code == 200
-        assert request.path == ("/" if response_ok else endpoint)
-        if not response_ok:
-            assert "Something went wrong" in response.data.decode()
-        mock_requests.put.assert_called_with(
-            "https://api.trello.com/1/cards/1",
-            params={
-                "key": os.getenv("TRELLO_KEY"),
-                "token": os.getenv("TRELLO_TOKEN"),
-                "idList": test_status[Status.COMPLETED if endpoint == "/complete-item" else Status.IN_PROGRESS],
-            },
-        )
+    response = client.post(endpoint, data={"id": test_id}, follow_redirects=True)
+    assert response.status_code == 200
+    assert request.path == "/"
+    assert "To Do" not in response.data.decode()
+    assert ("In Progress" if endpoint == "/start-item" else "Complete Items") in response.data.decode()
+    assert ("In Progress" if endpoint != "/start-item" else "Complete Items") not in response.data.decode()
+    assert "test name" in response.data.decode()

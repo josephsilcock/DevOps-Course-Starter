@@ -11,6 +11,8 @@ Simply run:
 ```bash
 docker compose up -d
 ```
+> **_NOTE:_**  This includes a MongoDb image, and will connect to this, ignoring the value for 
+> `MONGODB_CONNECTION_STRING` in the env file.
 
 ### Manually
 
@@ -41,3 +43,18 @@ To run the image:
 ```bash
 docker run -d -p 5000:80 --env-file ./.env todo-app:prod
 ```
+
+## MongoDB
+
+To create the MongoDB image, run: 
+```bash
+docker pull mongo
+```
+
+To run the image:
+```bash
+docker run -d -p 27017:27017 --name todo-mongo mongo:latest
+```
+
+Setting the `MONGODB_CONNECTION_STRING` environment variable to `mongodb://localhost:27017` will then connect to this 
+database

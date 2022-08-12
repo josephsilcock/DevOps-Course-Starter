@@ -6,6 +6,8 @@ services:
     ports:
       - 5000:5000
     env_file: ./.env
+    environment:
+      - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017
     volumes:
       - type: bind
         source: ./todo_app
@@ -23,3 +25,7 @@ services:
         source: ./tests
         target: /todo-app/tests
     entrypoint: watchmedo shell-command --patterns="*.py" --recursive --command "poetry run pytest"
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017

@@ -45,7 +45,7 @@ jobs:
       - name: Lint
         run: docker run --mount type=bind,source="$(pwd)",target=/todo-app --entrypoint bash todo-app:test ./scripts/lint
   deploy_docker:
-    name: Deploy to Docker Hub
+    name: Deploy
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
     needs: [build, static]
