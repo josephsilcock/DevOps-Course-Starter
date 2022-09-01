@@ -15,6 +15,11 @@ MongoDB locally](https://www.mongodb.com/try/download/), or use a cloud based ve
 
 An alternative option is to use [MongoDB in docker](Docker.md#mongodb).
 
+#### GitHub OAuth App
+
+We use GitHub to authenticate and authorise users on the app. In order to use this, [set up an OAuth app on GitHub](
+https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/)
+
 #### .env File
 
 You'll also need to clone a new `.env` file from the `.env.template` to store local configuration options. This is a 
