@@ -48,9 +48,12 @@ class MongoDbUserRequests:
             }
         )
 
+    def get_user_role(self, user: User) -> int:
+        db_user = self.collection.find_one({"githubId": user.id})
+        return db_user['role']
+
     def user_is_authorised(self, user: User, role: Role) -> bool:
-        db_user = self.collection.find_one({"githubId": int(user.id)})
-        return db_user['role'] >= role.value
+        return self.get_user_role(user) >= role.value
 
     def get_users(self) -> UserView:
         return UserView([DbUser(user['githubId'], user['role'], user['githubName']) for user in self.collection.find()])

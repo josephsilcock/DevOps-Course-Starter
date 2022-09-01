@@ -21,7 +21,7 @@
             {%  if item.due is not none %}
               <div>{{ item.due.day }} {{ item.due.strftime("%b %Y") }}</div>
             {% endif %}
-            {%  if writer_permissions %}
+            {%  if role > 1 %}
               <div class="btn-group mr-2" role="group">
                 <form action="/start-item" method="post" class="form-inline">
                   <button name="id" value="{{ item.id_ }}" class="btn btn-primary btn-sm" >Start</button>
@@ -49,7 +49,7 @@
             {%  if item.due is not none %}
               <div>{{ item.due.day }} {{ item.due.strftime("%b %Y") }}</div>
             {% endif %}
-            {%  if writer_permissions %}
+            {%  if role > 1 %}
               <div class="btn-group mr-2" role="group">
                 <form action="/complete-item" method="post" class="form-inline">
                   <button name="id" value="{{ item.id_ }}" class="btn btn-success btn-sm" >Complete</button>
@@ -71,7 +71,7 @@
           {% for item in items.completed %}
             <li>
               {{ item.title }}
-              {%  if writer_permissions %}
+              {%  if role > 1 %}
                 <div class="btn-group mr-2" role="group">
                   <form action="/delete-item" method="post" class="form-inline">
                     <button name="id" value="{{ item.id_ }}" class="btn btn-danger btn-sm">Delete</button>
@@ -85,7 +85,7 @@
     </div>
   </div>
 
-  {%  if writer_permissions %}
+  {%  if role > 1 %}
     <h2>Add item to do</h2><br>
     <div class="row">
       <form class="form-inline" action="/add-item" method="post">
@@ -98,5 +98,9 @@
         <input type="submit" class="btn btn-primary mb-2" value="Add item">
       </form>
     </div>
+  {% endif %}
+
+  {% if role > 2 %}
+    <a href="/admin">Admin Page</a>
   {% endif %}
 {% endblock %}

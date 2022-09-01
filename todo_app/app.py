@@ -38,7 +38,7 @@ def create_app() -> Flask:
     @login_required
     def index():
         return render_template(
-            "index.html", items=item_requests.get_items(), writer_permissions=True
+            "index.html", items=item_requests.get_items(), role=user_requests.get_user_role(current_user)
         )
 
     @app.route("/add-item", methods=["POST"])
