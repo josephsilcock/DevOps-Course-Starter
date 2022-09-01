@@ -2,13 +2,13 @@ import os
 from functools import wraps
 
 from flask import Flask, redirect, render_template, request
-from flask_login import LoginManager, login_required, login_user, current_user
+from flask_login import LoginManager, login_required, login_user
 
 from todo_app.login.github import GithubAuthenticator
 from todo_app.data.items import Status
 from todo_app.data.mongodb_requests import MongoDbRequests
 from todo_app.flask_config import Config
-from todo_app.login.user import User, Role
+from todo_app.login.user import User, user_has_writer_permissions
 
 
 def create_app() -> Flask:
@@ -24,7 +24,7 @@ def create_app() -> Flask:
     def _writer_role_required(func):
         @wraps(func)
         def wrap(*args, **kwargs):
-            if os.getenv('LOGIN_DISABLED') == 'True' or current_user.role == Role.WRITER:
+            if user_has_writer_permissions():
                 return func(*args, **kwargs)
             return redirect("/unauthorized")
 
@@ -33,7 +33,7 @@ def create_app() -> Flask:
     @app.route("/")
     @login_required
     def index():
-        return render_template("index.html", items=mongodb_requests.get_items())
+        return render_template("index.html", items=mongodb_requests.get_items(), writer_permissions=user_has_writer_permissions())
 
     @app.route("/add-item", methods=["POST"])
     @login_required
