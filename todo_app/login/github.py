@@ -1,8 +1,11 @@
 import os
 from random import randint
+from typing import Optional
 
 import requests
 from flask import request
+
+from todo_app.login.user import User
 
 
 class GithubAuthenticator:
@@ -10,6 +13,7 @@ class GithubAuthenticator:
         self.state = str(randint(10000000000000, 99999999999999))
         self.access_token = None
         self.user_id = None
+        self.user_name = None
 
     @property
     def login_url(self) -> str:
@@ -31,9 +35,17 @@ class GithubAuthenticator:
         )
         self.access_token = token_request.json()["access_token"]
 
-    def get_user_id(self) -> None:
+    def get_user_details(self) -> None:
         if not self.is_genuine_response():
             return
         self.get_token()
         id_post = requests.get("https://api.github.com/user", headers={"Authorization": f"Bearer {self.access_token}"})
         self.user_id = id_post.json()["id"]
+        self.user_name = id_post.json()["login"]
+
+    def get_user(self) -> Optional[User]:
+        if not self.is_genuine_response():
+            return
+        self.get_token()
+        self.get_user_details()
+        return User(self.user_id, self.user_name)

@@ -1,7 +1,7 @@
 import os
 from enum import Enum, auto
 
-from flask_login import UserMixin, current_user
+from flask_login import UserMixin
 
 
 class Role(Enum):
@@ -11,5 +11,6 @@ class Role(Enum):
 
 
 class User(UserMixin):
-    def __init__(self, id: str):
+    def __init__(self, id: str, name: str = ""):
         self.id = id
+        self.name = name
