@@ -1,3 +1,4 @@
+import os
 from functools import wraps
 
 from flask import Flask, redirect, render_template, request
@@ -23,7 +24,7 @@ def create_app() -> Flask:
     def _writer_role_required(func):
         @wraps(func)
         def wrap(*args, **kwargs):
-            if current_user.role == Role.READER:
+            if os.getenv('LOGIN_DISABLED') == 'True' or current_user.role == Role.WRITER:
                 return func(*args, **kwargs)
             return redirect("/unauthorized")
 
