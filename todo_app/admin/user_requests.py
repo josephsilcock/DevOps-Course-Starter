@@ -49,6 +49,8 @@ class MongoDbUserRequests:
         )
 
     def get_user_role(self, user: User) -> int:
+        if os.getenv("LOGIN_DISABLED") == "True":
+            return Role.ADMIN.value
         db_user = self.collection.find_one({"githubId": user.id})
         return db_user["role"]
 
