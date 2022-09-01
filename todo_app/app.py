@@ -1,14 +1,14 @@
-from functools import wraps, partial
+from functools import wraps
 
 from flask import Flask, redirect, render_template, request
-from flask_login import LoginManager, login_required, login_user, current_user
+from flask_login import LoginManager, current_user, login_required, login_user
 
 from todo_app.admin.user_requests import MongoDbUserRequests
 from todo_app.data.items import Status
 from todo_app.data.mongodb_requests import MongoDbRequests
 from todo_app.flask_config import Config
 from todo_app.login.github import GithubAuthenticator
-from todo_app.login.user import User, Role
+from todo_app.login.user import Role, User
 
 
 def create_app() -> Flask:
@@ -31,8 +31,8 @@ def create_app() -> Flask:
                 return redirect("/unauthorized")
 
             return wrap
-        return _is_authorised_for_role
 
+        return _is_authorised_for_role
 
     @app.route("/")
     @login_required

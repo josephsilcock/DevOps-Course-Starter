@@ -1,4 +1,3 @@
-import os
 from enum import Enum, auto
 
 from flask_login import UserMixin

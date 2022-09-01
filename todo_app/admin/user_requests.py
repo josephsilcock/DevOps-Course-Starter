@@ -3,7 +3,7 @@ from typing import List
 
 import pymongo
 
-from todo_app.login.user import User, Role
+from todo_app.login.user import Role, User
 
 
 class DbUser:
@@ -50,15 +50,13 @@ class MongoDbUserRequests:
 
     def get_user_role(self, user: User) -> int:
         db_user = self.collection.find_one({"githubId": user.id})
-        return db_user['role']
+        return db_user["role"]
 
     def user_is_authorised(self, user: User, role: Role) -> bool:
         return self.get_user_role(user) >= role.value
 
     def get_users(self) -> UserView:
-        return UserView([DbUser(user['githubId'], user['role'], user['githubName']) for user in self.collection.find()])
+        return UserView([DbUser(user["githubId"], user["role"], user["githubName"]) for user in self.collection.find()])
 
     def change_role(self, github_id: str, new_role: Role) -> None:
-        self.collection.update_one(
-            {"githubId": int(github_id)}, {"$set": {"role": new_role.value}}
-        )
+        self.collection.update_one({"githubId": int(github_id)}, {"$set": {"role": new_role.value}})
