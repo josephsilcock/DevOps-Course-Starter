@@ -1,13 +1,12 @@
-import os
 from functools import wraps
 
 from flask import Flask, redirect, render_template, request
 from flask_login import LoginManager, login_required, login_user
 
-from todo_app.login.github import GithubAuthenticator
 from todo_app.data.items import Status
 from todo_app.data.mongodb_requests import MongoDbRequests
 from todo_app.flask_config import Config
+from todo_app.login.github import GithubAuthenticator
 from todo_app.login.user import User, user_has_writer_permissions
 
 
@@ -33,7 +32,9 @@ def create_app() -> Flask:
     @app.route("/")
     @login_required
     def index():
-        return render_template("index.html", items=mongodb_requests.get_items(), writer_permissions=user_has_writer_permissions())
+        return render_template(
+            "index.html", items=mongodb_requests.get_items(), writer_permissions=user_has_writer_permissions()
+        )
 
     @app.route("/add-item", methods=["POST"])
     @login_required
@@ -89,5 +90,3 @@ def create_app() -> Flask:
     login_manager.init_app(app)
 
     return app
-
-

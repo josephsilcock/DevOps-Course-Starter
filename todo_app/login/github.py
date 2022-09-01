@@ -1,7 +1,7 @@
 import os
-import requests
 from random import randint
 
+import requests
 from flask import request
 
 
@@ -20,11 +20,15 @@ class GithubAuthenticator:
         return request.values.get("state") == self.state
 
     def get_token(self) -> None:
-        token_request = requests.post("https://github.com/login/oauth/access_token", params={
-            "client_id": os.getenv("GITHUB_CLIENT_ID"),
-            "client_secret": os.getenv("GITHUB_CLIENT_SECRET"),
-            "code": request.values.get("code"),
-        }, headers={"Accept": "application/json"})
+        token_request = requests.post(
+            "https://github.com/login/oauth/access_token",
+            params={
+                "client_id": os.getenv("GITHUB_CLIENT_ID"),
+                "client_secret": os.getenv("GITHUB_CLIENT_SECRET"),
+                "code": request.values.get("code"),
+            },
+            headers={"Accept": "application/json"},
+        )
         self.access_token = token_request.json()["access_token"]
 
     def get_user_id(self) -> None:

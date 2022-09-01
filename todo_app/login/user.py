@@ -1,5 +1,6 @@
 import os
 from enum import Enum, auto
+
 from flask_login import UserMixin, current_user
 
 
@@ -20,4 +21,4 @@ class User(UserMixin):
 
 
 def user_has_writer_permissions() -> bool:
-    return os.getenv('LOGIN_DISABLED') == 'True' or current_user.role == Role.WRITER
+    return os.getenv("LOGIN_DISABLED") == "True" or current_user.role == Role.WRITER
