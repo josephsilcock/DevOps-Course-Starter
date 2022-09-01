@@ -1,11 +1,11 @@
 from flask import Flask, redirect, render_template, request
 from flask_login import LoginManager, login_required, login_user
 
-from todo_app.authentication.github import GithubAuthenticator
+from todo_app.login.github import GithubAuthenticator
 from todo_app.data.items import Status
 from todo_app.data.mongodb_requests import MongoDbRequests
 from todo_app.flask_config import Config
-from todo_app.authentication.user import User
+from todo_app.login.user import User
 
 
 def create_app() -> Flask:
