@@ -23,8 +23,9 @@ def create_app() -> Flask:
     def _writer_role_required(func):
         @wraps(func)
         def wrap(*args, **kwargs):
-            if current_user.role == Role.WRITER:
+            if current_user.role == Role.READER:
                 return func(*args, **kwargs)
+            return redirect("/unauthorized")
 
         return wrap
 
@@ -70,6 +71,11 @@ def create_app() -> Flask:
             user = User(authenticator.user_id)
             login_user(user)
             return redirect("/")
+        return redirect("/unauthorized")
+
+    @app.route("/unauthorized")
+    def unauthorized():
+        return render_template("unauthorized.html")
 
     @login_manager.unauthorized_handler
     def unauthenticated():
