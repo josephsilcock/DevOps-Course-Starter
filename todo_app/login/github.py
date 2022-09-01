@@ -8,8 +8,8 @@ from flask import request
 class GithubAuthenticator:
     def __init__(self):
         self.state = str(randint(10000000000000, 99999999999999))
-        self.access_token = ""
-        self.user_id = ""
+        self.access_token = None
+        self.user_id = None
 
     @property
     def login_url(self) -> str:
