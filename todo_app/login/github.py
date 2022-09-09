@@ -36,9 +36,6 @@ class GithubAuthenticator:
         self.access_token = token_request.json()["access_token"]
 
     def get_user_details(self) -> None:
-        if not self.is_genuine_response():
-            return
-        self.get_token()
         id_post = requests.get("https://api.github.com/user", headers={"Authorization": f"Bearer {self.access_token}"})
         self.user_id = id_post.json()["id"]
         self.user_name = id_post.json()["login"]
