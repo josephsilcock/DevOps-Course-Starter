@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block title %}To-Do App{% endblock %}
+
+{% block content %}
+  <div class="jumbotron">
+    <h1 class="display-4">To-Do App</h1>
+    <p class="lead">Just another to-do app.</p>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      {% if users.admin|length > 0 %}
+        <h2>Admins</h2>
+        <ul class="list-group mb-4">
+          {% for user in users.admin %}
+          <li>
+            <div>{{ user.name }}</div>
+          </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if users.writer|length > 0 %}
+        <h2>Writers</h2>
+        <ul class="list-group mb-4">
+          {% for user in users.writer %}
+          <li>
+            <div>{{ user.name }}</div>
+            <div class="btn-group mr-2" role="group">
+              <form action="/make-admin" method="post" class="form-inline">
+                <button name="id" value="{{ user.github_id }}" class="btn btn-primary btn-sm" >Make Admin</button>
+              </form>
+            </div>
+            <div class="btn-group mr-2" role="group">
+              <form action="/make-reader" method="post" class="form-inline">
+                <button name="id" value="{{ user.github_id }}" class="btn btn-primary btn-sm">Make Reader</button>
+              </form>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if users.reader|length > 0 %}
+        <h2>Readers</h2>
+        <ul class="list-group mb-4">
+          {% for user in users.reader %}
+          <li>
+            <div>{{ user.name }}</div>
+            <div class="btn-group mr-2" role="group">
+              <form action="/make-admin" method="post" class="form-inline">
+                <button name="id" value="{{ user.github_id }}" class="btn btn-primary btn-sm" >Make Admin</button>
+              </form>
+            </div>
+            <div class="btn-group mr-2" role="group">
+              <form action="/make-writer" method="post" class="form-inline">
+                <button name="id" value="{{ user.github_id }}" class="btn btn-primary btn-sm">Make Writer</button>
+              </form>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+  <a href="/">Main Page</a>
+{% endblock %}
