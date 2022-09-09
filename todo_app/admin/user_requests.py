@@ -42,7 +42,7 @@ class MongoDbUserRequests:
         role = Role.ADMIN if len(list(self.collection.find())) == 0 else Role.READER
         self.collection.insert_one(
             {
-                "githubId": user.id,
+                "githubId": int(user.id),
                 "role": role.value,
                 "githubName": user.name,
             }
@@ -51,7 +51,7 @@ class MongoDbUserRequests:
     def get_user_role(self, user: User) -> int:
         if os.getenv("LOGIN_DISABLED") == "True":
             return Role.ADMIN.value
-        db_user = self.collection.find_one({"githubId": user.id})
+        db_user = self.collection.find_one({"githubId": int(user.id)})
         return db_user["role"]
 
     def user_is_authorised(self, user: User, role: Role) -> bool:
