@@ -12,59 +12,11 @@ on:
   schedule:
     - cron: "0 1 * * *"
 jobs:
-  build:
-    name: Build and test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Cache Docker Images
-        uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
-      - name: Build
-        run: docker build --target development --tag todo-app:test .
-      - name: Unit and Integration Tests
-        run: docker run --env-file ./.env.test --mount type=bind,source="$(pwd)",target=/todo-app --entrypoint poetry todo-app:test run pytest --cov-report xml --cov ./todo_app
-      - name: Publish Coverage
-        uses: codecov/codecov-action@v2
-  static:
-    name: Static Analysis
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Run Snyk
-        uses: snyk/actions/python@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      - name: Cache Docker Images
-        uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
-      - name: Build
-        run: docker build --target development --tag todo-app:test .
-      - name: Lint
-        run: docker run --mount type=bind,source="$(pwd)",target=/todo-app --entrypoint bash todo-app:test ./scripts/lint
   deploy_docker:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: [build, static]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Cache Docker Images
-        uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          target: production
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:latest , ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:${{ github.sha }}
       - name: Run Terraform
         run: terraform init
