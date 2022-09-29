@@ -47,7 +47,6 @@ jobs:
   deploy_docker:
     name: Deploy
     runs-on: ubuntu-latest
-    if: ${{ (github.ref == 'refs/heads/main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' }}
     needs: [build, static]
     steps:
       - name: Checkout
@@ -67,5 +66,5 @@ jobs:
           target: production
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:latest , ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:${{ github.sha }}
-      - name: Redeploy on Azure
-        run: curl -dH -X POST '${{ secrets.AZURE_REDPLOY_URL }}'
+      - name: Run Terraform
+        run: terraform init
