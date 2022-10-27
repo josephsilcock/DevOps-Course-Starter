@@ -14,6 +14,7 @@ from todo_app.login.user import Role, User
 def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(Config())
+    app.logger.setLevel(app.config["LOG_LEVEL"])
 
     item_requests = MongoDbRequests()
     user_requests = MongoDbUserRequests()
@@ -28,6 +29,7 @@ def create_app() -> Flask:
             def wrap(*args, **kwargs):
                 if user_requests.user_is_authorised(current_user, role):
                     return func(*args, **kwargs)
+                app.logger.warning(f"User: {current_user.id} attempted to access a site requiring role {role.name}")
                 return redirect("/unauthorized")
 
             return wrap
