@@ -16,3 +16,8 @@ variable "secret_key" {
   description = "Flask secret key"
   sensitive   = true
 }
+
+variable "loggly_token" {
+  description = "Loggly token"
+  sensitive   = true
+}
