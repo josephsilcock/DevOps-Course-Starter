@@ -53,11 +53,11 @@ class MongoDbUserRequests:
         )
 
     def get_user_role(self, user: User) -> int:
-        app.logger.info(f"Getting user role for user: {user.id}")
-
         if os.getenv("LOGIN_DISABLED") == "True":
             app.logger.critical("Login disabled - this should never happen!!")
             return Role.ADMIN.value
+
+        app.logger.info(f"Getting user role for user: {user.id}")
 
         db_user = self.collection.find_one({"githubId": int(user.id)})
         role = db_user["role"]
@@ -67,6 +67,9 @@ class MongoDbUserRequests:
         return role
 
     def user_is_authorised(self, user: User, role: Role) -> bool:
+        if os.getenv("LOGIN_DISABLED") == "True":
+            app.logger.critical("Login disabled - this should never happen!!")
+            return True
         app.logger.debug(f"Checking authorisation of user {user.id} for role {role.name}")
 
         is_authorised = self.get_user_role(user) >= role.value
