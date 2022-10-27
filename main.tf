@@ -46,7 +46,7 @@ resource "azurerm_linux_web_app" "main" {
     "DB_NAME"                    = azurerm_cosmosdb_mongo_database.main.name
     "GITHUB_CLIENT_ID"           = var.github_client_id
     "GITHUB_CLIENT_SECRET"       = var.github_client_secret
-    "SECRET_KEY"                 = "ackxmlskmc"
+    "SECRET_KEY"                 = var.secret_key
   }
 }
 

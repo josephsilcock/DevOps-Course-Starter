@@ -11,3 +11,8 @@ variable "github_client_secret" {
 variable "prefix" {
   description = "The prefix used for all resources in this environment"
 }
+
+variable "secret_key" {
+  description = "Flask secret key"
+  sensitive   = true
+}
