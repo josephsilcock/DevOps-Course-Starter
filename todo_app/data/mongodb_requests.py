@@ -26,7 +26,7 @@ class MongoDbRequests:
         )
 
     def get_items(self) -> ItemView:
-        app.logger.debug(f"Fetching items")
+        app.logger.debug("Fetching items")
 
         return ItemView([self._json_to_item(item) for item in self.collection.find()])
 

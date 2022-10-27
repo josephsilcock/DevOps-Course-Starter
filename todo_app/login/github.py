@@ -25,7 +25,7 @@ class GithubAuthenticator:
         return request.values.get("state") == self.state
 
     def get_token(self) -> None:
-        app.logger.info(f"Getting access token from github")
+        app.logger.info("Getting access token from github")
 
         token_request = requests.post(
             "https://github.com/login/oauth/access_token",

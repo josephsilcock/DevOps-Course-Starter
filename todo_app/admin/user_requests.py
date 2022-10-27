@@ -79,7 +79,7 @@ class MongoDbUserRequests:
         return is_authorised
 
     def get_users(self) -> UserView:
-        app.logger.debug(f"Fetching users")
+        app.logger.debug("Fetching users")
 
         return UserView([DbUser(user["githubId"], user["role"], user["githubName"]) for user in self.collection.find()])
 
