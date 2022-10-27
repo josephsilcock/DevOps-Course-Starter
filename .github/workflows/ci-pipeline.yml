@@ -44,8 +44,17 @@ jobs:
         run: docker build --target development --tag todo-app:test .
       - name: Lint
         run: docker run --mount type=bind,source="$(pwd)",target=/todo-app --entrypoint bash todo-app:test ./scripts/lint
-  deploy_docker:
+  deploy:
     name: Deploy
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      TF_VAR_prefix: ""
+      TF_VAR_github_client_id: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
+      TF_VAR_github_client_secret: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
+      TF_VAR_secret_key: ${{ secrets.SECRET_KEY }}
     runs-on: ubuntu-latest
     if: ${{ (github.ref == 'refs/heads/main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' }}
     needs: [build, static]
@@ -67,5 +76,9 @@ jobs:
           target: production
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:latest , ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:${{ github.sha }}
+      - name: Terraform init
+        run: terraform init
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
       - name: Redeploy on Azure
-        run: curl -dH -X POST '${{ secrets.AZURE_REDPLOY_URL }}'
+        run: curl -dH -X POST "$(terraform output -raw cd_webhook)"

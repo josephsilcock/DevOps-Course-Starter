@@ -7,3 +7,4 @@
 * [Docker](documentation/Docker.md)
 * [Deploying on a virtual machine](documentation/VM.md)
 * [Architecture Diagrams](documentation/Architecture.md)
+* [Terraform](documentation/Terraform.md)
