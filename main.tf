@@ -47,6 +47,7 @@ resource "azurerm_linux_web_app" "main" {
     "GITHUB_CLIENT_ID"           = var.github_client_id
     "GITHUB_CLIENT_SECRET"       = var.github_client_secret
     "SECRET_KEY"                 = var.secret_key
+    "LOGGLY_TOKEN"               = var.loggly_token
   }
 }
 
