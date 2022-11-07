@@ -53,8 +53,7 @@ class MongoDbUserRequests:
         )
 
     def get_user_role(self, user: User) -> int:
-        if os.getenv("LOGIN_DISABLED") == "True":
-            app.logger.critical("Login disabled - this should never happen!!")
+        if login_is_disabled():
             return Role.ADMIN.value
 
         app.logger.info(f"Getting user role for user: {user.id}")
@@ -67,8 +66,7 @@ class MongoDbUserRequests:
         return role
 
     def user_is_authorised(self, user: User, role: Role) -> bool:
-        if os.getenv("LOGIN_DISABLED") == "True":
-            app.logger.critical("Login disabled - this should never happen!!")
+        if login_is_disabled():
             return True
         app.logger.debug(f"Checking authorisation of user {user.id} for role {role.name}")
 
@@ -87,3 +85,10 @@ class MongoDbUserRequests:
         app.logger.info(f"Updating user role for user: {github_id}. New role: {new_role.name}")
 
         self.collection.update_one({"githubId": int(github_id)}, {"$set": {"role": new_role.value}})
+
+
+def login_is_disabled() -> bool:
+    if os.getenv("LOGIN_DISABLED") == "True":
+        app.logger.critical("Login disabled - this should never happen!!")
+        return True
+    return False

@@ -4,6 +4,7 @@ We have logging set up. You can change the log level by setting the environment 
 - DEBUG
 - INFO
 - WARNING
+- ERROR
 - CRITICAL
 
 ## Loggly
