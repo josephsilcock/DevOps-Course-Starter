@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: module-14
+spec:
+  selector:
+    matchLabels:
+      app: module-14
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: module-14
+    spec:
+      containers:
+        - name: todo-app
+          image: todo-app:prod
+          imagePullPolicy: Never
+          env:
+            - name: FLASK_APP
+              value: 'todo_app/app'
+            - name: FLASK_ENV
+              value: 'production'
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: flask_secret_key
+                  optional: false
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: todo-app
+                  key: mongodb_name
+                  optional: false
+            - name: MONGODB_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: todo-app
+                  key: mongodb_connection_string
+                  optional: false
+            - name: GITHUB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: todo-app
+                  key: github_client_secret
+                  optional: false
+            - name: GITHUB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: todo-app
+                  key: github_client_id
+                  optional: false
+            - name: LOG_LEVEL
+              value: 'INFO'
+            - name: LOGGLY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: todo-app
+                  key: loggly_token
+                  optional: false
+          ports:
+            - containerPort: 80
